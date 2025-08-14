@@ -1,0 +1,704 @@
+{% extends "base.html" %}
+
+{% block title %}Innovative Features - EchoVerse{% endblock %}
+
+{% block extra_css %}
+<style>
+/* AI Features Page Styles */
+.features-hero {
+    position: relative;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff6b6b 100%);
+    color: white;
+    padding: 5rem 0;
+    overflow: hidden;
+}
+
+.features-hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><radialGradient id="a" cx="50%" cy="50%"><stop offset="0%" stop-color="%23ffffff" stop-opacity="0.1"/><stop offset="100%" stop-color="%23ffffff" stop-opacity="0"/></radialGradient></defs><circle cx="200" cy="200" r="100" fill="url(%23a)"/><circle cx="800" cy="300" r="150" fill="url(%23a)"/><circle cx="400" cy="700" r="120" fill="url(%23a)"/></svg>');
+    opacity: 0.3;
+    animation: float 6s ease-in-out infinite;
+}
+
+.features-hero-content {
+    position: relative;
+    z-index: 2;
+}
+
+.hero-title {
+    font-size: 3.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+    background: linear-gradient(45deg, #fff, #feca57);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.hero-subtitle {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    opacity: 0.95;
+}
+
+.feature-card-modern {
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    border-radius: 20px;
+    padding: 2.5rem;
+    margin-bottom: 2rem;
+    height: 100%;
+    min-height: 380px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.feature-card-modern::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    transition: left 0.8s ease;
+}
+
+.feature-card-modern:hover::before {
+    left: 100%;
+}
+
+.feature-card-modern:hover {
+    transform: translateY(-10px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.feature-icon-modern {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+.feature-icon-modern.primary {
+    background: linear-gradient(45deg, #667eea, #764ba2);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+}
+
+.feature-icon-modern.success {
+    background: linear-gradient(45deg, #28a745, #20c997);
+    box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+}
+
+.feature-icon-modern.warning {
+    background: linear-gradient(45deg, #feca57, #ff9ff3);
+    box-shadow: 0 10px 25px rgba(254, 202, 87, 0.3);
+}
+
+.feature-icon-modern.info {
+    background: linear-gradient(45deg, #17a2b8, #667eea);
+    box-shadow: 0 10px 25px rgba(23, 162, 184, 0.3);
+}
+
+.feature-card-modern:hover .feature-icon-modern {
+    transform: scale(1.1) rotate(5deg);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+}
+
+.feature-title {
+    color: white;
+    font-weight: 700;
+    font-size: 1.6rem;
+    margin-bottom: 1.2rem;
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.feature-description {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: 400;
+}
+
+.modern-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.modern-label {
+    color: white;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    display: block;
+}
+
+.modern-select {
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    width: 100%;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.modern-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.3);
+    background: rgba(255, 255, 255, 0.95);
+}
+
+.feature-btn {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+    border: none;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.feature-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(238, 90, 36, 0.4);
+}
+
+.feature-btn::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.feature-btn:hover::after {
+    left: 100%;
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-top: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.result-title {
+    color: #feca57;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.result-content {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+}
+
+.result-meta {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.meta-tag {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 0.25rem 0.75rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    backdrop-filter: blur(5px);
+}
+
+/* Emotion Chart Styles */
+.emotion-chart {
+    margin-top: 1rem;
+}
+
+.emotion-bar {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    gap: 1rem;
+}
+
+.emotion-label {
+    min-width: 80px;
+    font-weight: 600;
+    color: white;
+    font-size: 0.9rem;
+}
+
+.emotion-progress {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.emotion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    border-radius: 4px;
+    transition: width 0.8s ease;
+}
+
+.emotion-percentage {
+    min-width: 40px;
+    text-align: right;
+    font-weight: 600;
+    color: white;
+    font-size: 0.9rem;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); }
+    33% { transform: translateY(-10px) rotate(1deg); }
+    66% { transform: translateY(5px) rotate(-1deg); }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .feature-card-modern {
+        margin-bottom: 1.5rem;
+    }
+    
+    .row.g-4 {
+        margin: 0;
+    }
+    
+    .col-lg-6 {
+        padding: 0.5rem;
+    }
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // AI Story Generator
+    $('#generateStoryBtn').click(function() {
+        const genre = $('#storyGenre').val();
+        const length = $('#storyLength').val();
+
+        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Generating...');
+        $(this).prop('disabled', true);
+
+        setTimeout(() => {
+            const story = generateStoryIdea(genre, length);
+            $('#storyTitle').text(story.title);
+            $('#storySynopsis').text(story.synopsis);
+            $('#storyGenreResult').text(story.genre);
+            $('#storyLengthResult').text(story.estimatedWords);
+            $('#storyResult').removeClass('d-none');
+
+            $(this).html('<i class="fas fa-wand-magic-sparkles me-2"></i>Generate Another');
+            $(this).prop('disabled', false);
+        }, 2000);
+    });
+
+    // Voice Personality Generator
+    $('#generateVoiceBtn').click(function() {
+        const genre = $('#voiceGenre').val();
+        const mood = $('#voiceMood').val();
+
+        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Creating...');
+        $(this).prop('disabled', true);
+
+        setTimeout(() => {
+            const personality = generateVoicePersonality(genre, mood);
+            $('#voicePersonalityResult').text(personality.description);
+            $('#voiceCharacteristics').text(personality.characteristics);
+            $('#voiceResult').removeClass('d-none');
+
+            $(this).html('<i class="fas fa-user-astronaut me-2"></i>Generate Another');
+            $(this).prop('disabled', false);
+        }, 1500);
+    });
+
+    // Emotion Analyzer
+    $('#analyzeEmotionBtn').click(function() {
+        const text = $('#emotionText').val().trim();
+        if (!text) {
+            alert('Please enter some text to analyze!');
+            return;
+        }
+
+        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Analyzing...');
+        $(this).prop('disabled', true);
+
+        setTimeout(() => {
+            const analysis = analyzeEmotions(text);
+            displayEmotionResults(analysis);
+            $('#emotionResult').removeClass('d-none');
+
+            $(this).html('<i class="fas fa-brain me-2"></i>Analyze Again');
+            $(this).prop('disabled', false);
+        }, 1800);
+    });
+
+    // Audio Enhancer
+    $('#enhanceAudioBtn').click(function() {
+        const enhancement = $('#enhancementType').val();
+
+        $(this).html('<i class="fas fa-spinner fa-spin me-2"></i>Processing...');
+        $(this).prop('disabled', true);
+
+        setTimeout(() => {
+            const result = processAudioEnhancement(enhancement);
+            $('#enhancementResult').text(result.description);
+            $('#enhancementSettings').text(result.settings);
+            $('#audioResult').removeClass('d-none');
+
+            $(this).html('<i class="fas fa-volume-up me-2"></i>Enhance Again');
+            $(this).prop('disabled', false);
+        }, 2200);
+    });
+});
+
+// Story Generation Function
+function generateStoryIdea(genre, length) {
+    const stories = {
+        mystery: [
+            {
+                title: "The Vanishing Librarian",
+                synopsis: "When the town's beloved librarian disappears without a trace, detective Sarah Chen discovers that the missing person case is connected to a series of rare book thefts spanning decades.",
+                estimatedWords: length === 'short' ? 800 : length === 'medium' ? 1500 : 3000
+            }
+        ],
+        fantasy: [
+            {
+                title: "The Last Song of the Phoenix",
+                synopsis: "In a world where music has magical properties, a young bard discovers she can hear the final song of the legendary Phoenix.",
+                estimatedWords: length === 'short' ? 900 : length === 'medium' ? 2000 : 4000
+            }
+        ],
+        'sci-fi': [
+            {
+                title: "Memory Merchants",
+                synopsis: "In 2087, memories can be extracted, edited, and sold. When a memory merchant discovers her own childhood memories have been tampered with.",
+                estimatedWords: length === 'short' ? 850 : length === 'medium' ? 1700 : 3200
+            }
+        ]
+    };
+
+    const genreStories = stories[genre] || stories.mystery;
+    const randomStory = genreStories[Math.floor(Math.random() * genreStories.length)];
+
+    return {
+        ...randomStory,
+        genre: genre.charAt(0).toUpperCase() + genre.slice(1)
+    };
+}
+
+// Voice Personality Generation
+function generateVoicePersonality(genre, mood) {
+    const personalities = {
+        mystery: {
+            neutral: {
+                description: "A measured, contemplative narrator with subtle tension in their voice. Perfect for building suspense without overwhelming the listener.",
+                characteristics: "Deep, steady pace • Slight gravelly texture • Strategic pauses"
+            }
+        },
+        general: {
+            neutral: {
+                description: "A professional, clear narrator suitable for any content type with excellent articulation.",
+                characteristics: "Clear diction • Steady pace • Professional tone"
+            }
+        }
+    };
+
+    const genrePersonalities = personalities[genre] || personalities.general;
+    const personality = genrePersonalities[mood] || genrePersonalities.general.neutral;
+
+    return personality;
+}
+
+// Emotion Analysis Function
+function analyzeEmotions(text) {
+    const emotions = ['joy', 'sadness', 'anger', 'fear', 'surprise', 'trust', 'anticipation'];
+    const analysis = {};
+
+    emotions.forEach(emotion => {
+        analysis[emotion] = Math.random() * 100;
+    });
+
+    // Normalize to 100%
+    const total = Object.values(analysis).reduce((a, b) => a + b, 0);
+    Object.keys(analysis).forEach(key => {
+        analysis[key] = Math.round((analysis[key] / total) * 100);
+    });
+
+    return analysis;
+}
+
+function displayEmotionResults(analysis) {
+    const container = $('#emotionAnalysis');
+    container.empty();
+
+    Object.entries(analysis).forEach(([emotion, percentage]) => {
+        if (percentage > 5) {
+            const emotionBar = `
+                <div class="emotion-bar">
+                    <div class="emotion-label">${emotion.charAt(0).toUpperCase() + emotion.slice(1)}</div>
+                    <div class="emotion-progress">
+                        <div class="emotion-fill" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="emotion-percentage">${percentage}%</div>
+                </div>
+            `;
+            container.append(emotionBar);
+        }
+    });
+}
+
+// Audio Enhancement Function
+function processAudioEnhancement(type) {
+    const enhancements = {
+        clarity: {
+            description: "Enhanced vocal clarity with noise reduction and frequency optimization for crystal-clear narration.",
+            settings: "Noise Gate: -40dB • EQ: +3dB @ 2-5kHz • Compression: 3:1 ratio"
+        },
+        warmth: {
+            description: "Added warmth and richness to the voice with harmonic enhancement and subtle reverb.",
+            settings: "Harmonic Exciter: +15% • Reverb: 8% wet • Low-mid boost: +2dB"
+        },
+        presence: {
+            description: "Increased vocal presence and authority with dynamic processing and spatial enhancement.",
+            settings: "Multiband Compression • Stereo Widening: 15% • Presence boost: +4dB"
+        },
+        spatial: {
+            description: "Creates immersive 3D audio experience with spatial positioning and room simulation.",
+            settings: "Binaural Processing • Room Reverb: Cathedral • Spatial Width: 180°"
+        },
+        vintage: {
+            description: "Adds classic radio character with tube warmth and analog saturation.",
+            settings: "Tube Saturation: 25% • Analog EQ • Vintage Compression: 4:1"
+        }
+    };
+
+    return enhancements[type] || enhancements.clarity;
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="features-hero">
+    <div class="container">
+        <div class="features-hero-content text-center">
+            <h1 class="hero-title">
+                <i class="fas fa-rocket me-3"></i>Innovative AI Features
+            </h1>
+            <p class="hero-subtitle">Discover what makes EchoVerse unique with cutting-edge AI innovations</p>
+        </div>
+    </div>
+</div>
+
+<!-- Features Grid -->
+<div class="container">
+    <div class="row g-4 mb-5">
+        <!-- AI Story Generator -->
+        <div class="col-lg-6">
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern primary">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h4 class="feature-title">AI Story Generator</h4>
+                <p class="feature-description">Generate complete stories, characters, and plots with AI assistance. Perfect for content creators and storytellers.</p>
+                
+                <div class="modern-form-group">
+                    <label class="modern-label">Genre</label>
+                    <select class="modern-select" id="storyGenre">
+                        <option value="random">🎲 Random</option>
+                        <option value="mystery">🔍 Mystery</option>
+                        <option value="fantasy">🧙 Fantasy</option>
+                        <option value="sci-fi">🚀 Science Fiction</option>
+                        <option value="romance">💕 Romance</option>
+                        <option value="adventure">⚔️ Adventure</option>
+                        <option value="horror">👻 Horror</option>
+                        <option value="comedy">😄 Comedy</option>
+                    </select>
+                </div>
+                
+                <div class="modern-form-group">
+                    <label class="modern-label">Story Length</label>
+                    <select class="modern-select" id="storyLength">
+                        <option value="short">📄 Short Story (500-1000 words)</option>
+                        <option value="medium" selected>📖 Medium Story (1000-2500 words)</option>
+                        <option value="long">📚 Long Story (2500+ words)</option>
+                    </select>
+                </div>
+                
+                <button class="feature-btn w-100" id="generateStoryBtn">
+                    <i class="fas fa-wand-magic-sparkles me-2"></i>Generate Story Idea
+                </button>
+                
+                <div id="storyResult" class="result-card d-none">
+                    <h6 class="result-title" id="storyTitle"></h6>
+                    <p class="result-content" id="storySynopsis"></p>
+                    <div class="result-meta">
+                        <span class="meta-tag">
+                            <i class="fas fa-tag me-1"></i>
+                            <span id="storyGenreResult"></span>
+                        </span>
+                        <span class="meta-tag">
+                            <i class="fas fa-file-text me-1"></i>
+                            <span id="storyLengthResult"></span> words
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Voice Personality System -->
+        <div class="col-lg-6">
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern success">
+                    <i class="fas fa-user-astronaut"></i>
+                </div>
+                <h4 class="feature-title">Voice Personality System</h4>
+                <p class="feature-description">Create unique voice personalities that adapt to your content's mood and genre for personalized narration.</p>
+                
+                <div class="modern-form-group">
+                    <label class="modern-label">Content Genre</label>
+                    <select class="modern-select" id="voiceGenre">
+                        <option value="general">📝 General</option>
+                        <option value="mystery">🔍 Mystery</option>
+                        <option value="fantasy">🧙 Fantasy</option>
+                        <option value="romance">💕 Romance</option>
+                        <option value="educational">🎓 Educational</option>
+                        <option value="business">💼 Business</option>
+                        <option value="children">🧸 Children's</option>
+                    </select>
+                </div>
+
+                <div class="modern-form-group">
+                    <label class="modern-label">Desired Mood</label>
+                    <select class="modern-select" id="voiceMood">
+                        <option value="neutral">😐 Neutral</option>
+                        <option value="energetic">⚡ Energetic</option>
+                        <option value="calm">🧘 Calm</option>
+                        <option value="dramatic">🎭 Dramatic</option>
+                        <option value="formal">🎩 Formal</option>
+                        <option value="friendly">😊 Friendly</option>
+                        <option value="mysterious">🌙 Mysterious</option>
+                    </select>
+                </div>
+                
+                <button class="feature-btn w-100" id="generateVoiceBtn">
+                    <i class="fas fa-user-astronaut me-2"></i>Generate Voice Personality
+                </button>
+                
+                <div id="voiceResult" class="result-card d-none">
+                    <h6 class="result-title">Voice Personality Created</h6>
+                    <p class="result-content" id="voicePersonalityResult"></p>
+                    <div class="result-meta">
+                        <span class="meta-tag">
+                            <i class="fas fa-microphone me-1"></i>
+                            <span id="voiceCharacteristics"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Advanced Content Analyzer -->
+        <div class="col-lg-6">
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern info">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="feature-title">Advanced Content Analyzer</h4>
+                <p class="feature-description">Get deep insights about your text including genre detection, emotion analysis, and complexity assessment.</p>
+                
+                <div class="modern-form-group">
+                    <label class="modern-label">Text to Analyze</label>
+                    <textarea class="modern-select" id="emotionText" rows="4" 
+                              placeholder="Enter text to analyze emotions and content..."></textarea>
+                </div>
+                
+                <button class="feature-btn w-100" id="analyzeEmotionBtn">
+                    <i class="fas fa-brain me-2"></i>Analyze Emotions
+                </button>
+                
+                <div id="emotionResult" class="result-card d-none">
+                    <h6 class="result-title">Emotion Analysis</h6>
+                    <div id="emotionAnalysis" class="emotion-chart"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Audio Enhancement Engine -->
+        <div class="col-lg-6">
+            <div class="feature-card-modern">
+                <div class="feature-icon-modern warning">
+                    <i class="fas fa-volume-up"></i>
+                </div>
+                <h4 class="feature-title">Audio Enhancement Engine</h4>
+                <p class="feature-description">Professional audio processing with AI-driven enhancement algorithms for studio-quality results.</p>
+                
+                <div class="modern-form-group">
+                    <label class="modern-label">Enhancement Type</label>
+                    <select class="modern-select" id="enhancementType">
+                        <option value="clarity">🔊 Vocal Clarity</option>
+                        <option value="warmth">🔥 Warmth & Richness</option>
+                        <option value="presence">⚡ Vocal Presence</option>
+                        <option value="spatial">🌌 Spatial Audio</option>
+                        <option value="vintage">📻 Vintage Character</option>
+                    </select>
+                </div>
+                
+                <button class="feature-btn w-100" id="enhanceAudioBtn">
+                    <i class="fas fa-volume-up me-2"></i>Process Enhancement
+                </button>
+                
+                <div id="audioResult" class="result-card d-none">
+                    <h6 class="result-title">Enhancement Applied</h6>
+                    <p class="result-content" id="enhancementResult"></p>
+                    <div class="result-meta">
+                        <span class="meta-tag">
+                            <i class="fas fa-cog me-1"></i>
+                            <span id="enhancementSettings"></span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

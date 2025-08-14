@@ -1,0 +1,554 @@
+{% extends "base.html" %}
+
+{% block title %}EchoVerse Dashboard - AI-Powered Audiobook Creation{% endblock %}
+
+{% block body_class %}dashboard-page{% endblock %}
+
+{% block content %}
+<!-- World-Class Hero Section -->
+<div class="hero-section-modern">
+    <div class="hero-background">
+        <!-- Dynamic Live Wallpaper System -->
+        <div class="live-wallpaper-container" id="liveWallpaperContainer">
+            <!-- Time-based Video Backgrounds -->
+            <div class="wallpaper-layer morning-wallpaper" id="morningWallpaper">
+                <video autoplay muted loop class="wallpaper-video" playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-sunrise-over-a-city-4313-large.mp4" type="video/mp4">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-book-pages-flipping-in-the-wind-4158-large.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="wallpaper-layer afternoon-wallpaper" id="afternoonWallpaper">
+                <video autoplay muted loop class="wallpaper-video" playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-microphone-in-a-recording-studio-4622-large.mp4" type="video/mp4">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-old-books-in-a-library-4481-large.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <div class="wallpaper-layer evening-wallpaper" id="eveningWallpaper">
+                <video autoplay muted loop class="wallpaper-video" playsinline>
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-blue-background-with-defocused-lights-1281-large.mp4" type="video/mp4">
+                    <source src="https://assets.mixkit.co/videos/preview/mixkit-night-city-lights-4313-large.mp4" type="video/mp4">
+                </video>
+            </div>
+
+            <!-- Animated Gradient Overlay -->
+            <div class="dynamic-gradient-overlay" id="dynamicOverlay"></div>
+
+            <!-- Floating Particles Animation -->
+            <div class="floating-particles" id="floatingParticles"></div>
+        </div>
+        <div class="hero-particles"></div>
+        <div class="hero-gradient"></div>
+    </div>
+
+    <div class="container">
+        <div class="row align-items-center min-vh-100">
+            <div class="col-lg-6" data-aos="fade-right" data-aos-duration="1000">
+                <div class="hero-content-modern">
+                    <div class="hero-badge mb-4">
+                        <span class="badge-icon">🏆</span>
+                        <span class="badge-text">World-Class AI Platform</span>
+                        <div class="badge-shine"></div>
+                    </div>
+
+                    <h1 class="hero-title">
+                        Transform Text into
+                        <span class="hero-highlight">Professional Audiobooks</span>
+                        <span class="hero-subtitle">with AI Excellence</span>
+                    </h1>
+
+                    <p class="hero-description">
+                        Experience the future of audiobook creation with our revolutionary
+                        <strong>IBM Granite 3.2</strong> integration, enhanced by Llama 3.1 and Mistral 7B.
+                        Create studio-quality audiobooks with emotion-aware voice synthesis,
+                        professional audio effects, and unmatched AI intelligence.
+                    </p>
+
+                    <!-- Granite Status Indicator -->
+                    <div class="granite-status-indicator mb-4" id="graniteStatus">
+                        <div class="status-card">
+                            <div class="status-icon" id="graniteStatusIcon">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <div class="status-text">
+                                <div class="status-title">IBM Granite 3.2</div>
+                                <div class="status-subtitle" id="graniteStatusText">Checking connection...</div>
+                            </div>
+                            <button class="status-test-btn" id="quickTestBtn" onclick="testGraniteModel()">
+                                <i class="fas fa-vial"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="hero-actions">
+                        <a href="{{ url_for('create') }}" class="btn-hero-primary">
+                            <span class="btn-icon"><i class="fas fa-magic"></i></span>
+                            <span class="btn-text">Create Audiobook</span>
+                            <div class="btn-glow"></div>
+                        </a>
+                        <button class="btn-hero-secondary" onclick="showJuryPresentation()">
+                            <span class="btn-icon"><i class="fas fa-trophy"></i></span>
+                            <span class="btn-text">Jury Presentation</span>
+                        </button>
+                    </div>
+
+                    <!-- Professional Demo Section -->
+                    <div class="hero-demo-section mt-4" data-aos="fade-up" data-aos-delay="800">
+                        <button class="btn btn-demo-play" onclick="playDemoAudio()">
+                            <i class="fas fa-play-circle me-2"></i>
+                            Listen to Sample Audiobook
+                        </button>
+                        <audio id="demoAudio" preload="metadata">
+                            <source src="{{ url_for('static', filename='audio/test_audio.mp3') }}" type="audio/mpeg">
+                            Your browser does not support the audio element.
+                        </audio>
+                    </div>
+
+                    <!-- Wallpaper Control Panel -->
+                    <div class="wallpaper-controls mt-3" data-aos="fade-up" data-aos-delay="900">
+                        <div class="control-label">
+                            <i class="fas fa-palette me-2"></i>
+                            <span>Live Wallpaper</span>
+                        </div>
+                        <div class="wallpaper-options">
+                            <button class="wallpaper-btn active" data-wallpaper="auto" onclick="setWallpaper('auto')">
+                                <i class="fas fa-clock"></i>
+                                <span>Auto</span>
+                            </button>
+                            <button class="wallpaper-btn" data-wallpaper="morning" onclick="setWallpaper('morning')">
+                                <i class="fas fa-sun"></i>
+                                <span>Morning</span>
+                            </button>
+                            <button class="wallpaper-btn" data-wallpaper="afternoon" onclick="setWallpaper('afternoon')">
+                                <i class="fas fa-microphone"></i>
+                                <span>Studio</span>
+                            </button>
+                            <button class="wallpaper-btn" data-wallpaper="evening" onclick="setWallpaper('evening')">
+                                <i class="fas fa-moon"></i>
+                                <span>Evening</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Key Features Grid -->
+                    <div class="hero-features">
+                        <div class="feature-item" data-aos="fade-up" data-aos-delay="200">
+                            <div class="feature-icon granite-icon">
+                                <i class="fas fa-microchip"></i>
+                                <div class="icon-pulse"></div>
+                            </div>
+                            <div class="feature-content">
+                                <h6>IBM Granite 3.2</h6>
+                                <small>Professional text transformation</small>
+                            </div>
+                        </div>
+
+                        <div class="feature-item" data-aos="fade-up" data-aos-delay="300">
+                            <div class="feature-icon emotion-icon">
+                                <i class="fas fa-heart"></i>
+                                <div class="icon-pulse"></div>
+                            </div>
+                            <div class="feature-content">
+                                <h6>Emotion Intelligence</h6>
+                                <small>AI-powered voice adaptation</small>
+                            </div>
+                        </div>
+
+                        <div class="feature-item" data-aos="fade-up" data-aos-delay="400">
+                            <div class="feature-icon global-icon">
+                                <i class="fas fa-globe"></i>
+                                <div class="icon-pulse"></div>
+                            </div>
+                            <div class="feature-content">
+                                <h6>12 Languages</h6>
+                                <small>Global accessibility</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
+                <div class="hero-visual-modern">
+                    <div class="ai-showcase-container">
+                        <div class="showcase-background">
+                            <div class="bg-circle circle-1"></div>
+                            <div class="bg-circle circle-2"></div>
+                            <div class="bg-circle circle-3"></div>
+                        </div>
+
+                        <div class="ai-model-card granite-card" data-aos="zoom-in" data-aos-delay="400">
+                            <div class="card-glow granite-glow"></div>
+                            <div class="model-icon-large">
+                                <i class="fas fa-microchip"></i>
+                            </div>
+                            <h5>IBM Granite 3.2</h5>
+                            <p>Text Tone Transformation</p>
+                            <div class="model-status-modern" id="graniteStatus">
+                                <div class="status-dot"></div>
+                                <span class="status-text">Initializing...</span>
+                            </div>
+                            <div class="card-shine"></div>
+                        </div>
+
+                        <div class="ai-model-card llama-card" data-aos="zoom-in" data-aos-delay="500">
+                            <div class="card-glow llama-glow"></div>
+                            <div class="model-icon-large">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <h5>Llama 3.1</h5>
+                            <p>Content Enhancement</p>
+                            <div class="model-status-modern" id="llamaStatus">
+                                <div class="status-dot"></div>
+                                <span class="status-text">Initializing...</span>
+                            </div>
+                            <div class="card-shine"></div>
+                        </div>
+
+                        <div class="ai-model-card mistral-card" data-aos="zoom-in" data-aos-delay="600">
+                            <div class="card-glow mistral-glow"></div>
+                            <div class="model-icon-large">
+                                <i class="fas fa-brain"></i>
+                            </div>
+                            <h5>Mistral 7B</h5>
+                            <p>Emotion Analysis</p>
+                            <div class="model-status-modern" id="mistralStatus">
+                                <div class="status-dot"></div>
+                                <span class="status-text">Initializing...</span>
+                            </div>
+                            <div class="card-shine"></div>
+                        </div>
+
+                        <!-- Connection Lines -->
+                        <div class="connection-lines">
+                            <svg class="connection-svg" viewBox="0 0 400 300">
+                                <path class="connection-path" d="M200,100 Q250,150 200,200" stroke="url(#gradient1)" stroke-width="2" fill="none"/>
+                                <path class="connection-path" d="M150,150 Q200,100 250,150" stroke="url(#gradient2)" stroke-width="2" fill="none"/>
+                                <defs>
+                                    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#764ba2;stop-opacity:0.3" />
+                                    </linearGradient>
+                                    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#f093fb;stop-opacity:1" />
+                                        <stop offset="100%" style="stop-color:#f5576c;stop-opacity:0.3" />
+                                    </linearGradient>
+                                </defs>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<section class="features-section py-5">
+    <div class="row">
+        <div class="col-12 text-center mb-5">
+            <h2 class="display-5 fw-bold">Why Choose EchoVerse?</h2>
+            <p class="lead text-muted">Professional-grade AI audiobook creation with innovative features</p>
+        </div>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-magic"></i>
+                </div>
+                <h4>8 Tone Variations</h4>
+                <p>Transform your text into neutral, suspenseful, inspiring, educational, conversational, formal, dramatic, or calming tones.</p>
+                <ul class="feature-list">
+                    <li>IBM Granite 3.2 powered</li>
+                    <li>Context-aware transformation</li>
+                    <li>Professional quality output</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-heart-pulse"></i>
+                </div>
+                <h4>Emotion Intelligence</h4>
+                <p>Advanced emotion analysis adapts voice characteristics, pacing, and audio effects to match content mood.</p>
+                <ul class="feature-list">
+                    <li>Mistral 7B emotion engine</li>
+                    <li>Dynamic voice adaptation</li>
+                    <li>Intelligent pacing control</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-waveform-lines"></i>
+                </div>
+                <h4>Professional Audio</h4>
+                <p>Advanced audio processing with reverb, compression, EQ, and effects for studio-quality results.</p>
+                <ul class="feature-list">
+                    <li>Multi-language TTS</li>
+                    <li>Audio effects processing</li>
+                    <li>High-quality MP3 output</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-file-text"></i>
+                </div>
+                <h4>Multiple File Formats</h4>
+                <p>Support for TXT, MD, DOCX, PDF, RTF, and HTML files with intelligent text extraction.</p>
+                <ul class="feature-list">
+                    <li>Smart text extraction</li>
+                    <li>Format preservation</li>
+                    <li>Large file support</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-universal-access"></i>
+                </div>
+                <h4>Accessibility First</h4>
+                <p>Designed for visually impaired users, learning differences, and diverse accessibility needs.</p>
+                <ul class="feature-list">
+                    <li>Screen reader compatible</li>
+                    <li>Multiple learning styles</li>
+                    <li>Inclusive design principles</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-lg-4 col-md-6">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h4>Enterprise Ready</h4>
+                <p>Professional deployment options with Docker, cloud hosting, and scalable architecture.</p>
+                <ul class="feature-list">
+                    <li>Docker containerization</li>
+                    <li>Cloud deployment ready</li>
+                    <li>Scalable processing</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="stats-section py-5 bg-light">
+    <div class="row text-center">
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-item">
+                <h3 class="stat-number" data-target="3">0</h3>
+                <p class="stat-label">AI Models Integrated</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-item">
+                <h3 class="stat-number" data-target="8">0</h3>
+                <p class="stat-label">Tone Variations</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-item">
+                <h3 class="stat-number" data-target="12">0</h3>
+                <p class="stat-label">Languages Supported</p>
+            </div>
+        </div>
+        <div class="col-md-3 col-6 mb-4">
+            <div class="stat-item">
+                <h3 class="stat-number" data-target="100">0</h3>
+                <p class="stat-label">% Free to Use</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section py-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <h2 class="display-5 fw-bold mb-4">Ready to Create Professional Audiobooks?</h2>
+            <p class="lead mb-4">
+                Join the future of audiobook creation with AI-powered text transformation and emotion-aware voice synthesis.
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{{ url_for('create') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-plus-circle me-2"></i>Start Creating Now
+                </a>
+                <button class="btn btn-outline-primary btn-lg" onclick="checkModelStatus()">
+                    <i class="fas fa-brain me-2"></i>Check AI Models
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+$(document).ready(function() {
+    // Handle hero video background
+    const heroBgVideo = document.getElementById('heroBgVideo');
+    if (heroBgVideo) {
+        heroBgVideo.addEventListener('error', function() {
+            console.log('Hero video failed to load, using gradient fallback');
+            $('.hero-video-background').fadeOut(1000);
+        });
+
+        heroBgVideo.addEventListener('loadstart', function() {
+            console.log('Hero video loading...');
+        });
+
+        heroBgVideo.addEventListener('canplay', function() {
+            console.log('Hero video ready to play');
+        });
+    }
+
+    // Enhanced scroll animations
+    $(window).scroll(function() {
+        const scrolled = $(this).scrollTop();
+        const rate = scrolled * -0.5;
+
+        if (heroBgVideo) {
+            $('.hero-video-background').css('transform', `translateY(${rate}px)`);
+        }
+    });
+
+    // Auto-check Granite status on page load
+    setTimeout(checkGraniteStatus, 2000);
+});
+
+// Check Granite Status Function
+function checkGraniteStatus() {
+    const statusIcon = $('#graniteStatusIcon');
+    const statusText = $('#graniteStatusText');
+
+    // Set testing state
+    statusIcon.removeClass('connected error').addClass('testing');
+    statusText.text('Testing connection...');
+
+    $.post('/api/test-granite')
+        .done(function(data) {
+            if (data.status === 'success') {
+                statusIcon.removeClass('testing error').addClass('connected');
+                statusText.text('✅ Connected & Ready');
+            } else if (data.status === 'warning') {
+                statusIcon.removeClass('testing connected').addClass('error');
+                statusText.text('⚠️ Connected but issues detected');
+            } else {
+                statusIcon.removeClass('testing connected').addClass('error');
+                statusText.text('❌ Connection failed');
+            }
+        })
+        .fail(function() {
+            statusIcon.removeClass('testing connected').addClass('error');
+            statusText.text('❌ Cannot reach Granite model');
+        });
+}
+
+// Quick test button
+$('#quickTestBtn').click(function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    testGraniteModel();
+});
+</script>
+<script>
+$(document).ready(function() {
+    // Load model status on page load
+    loadModelStatus();
+    
+    // Animate statistics
+    animateStats();
+    
+    // Demo button
+    $('#demoBtn').click(function() {
+        showAlert('Demo feature coming soon! Try creating your first audiobook instead.', 'info');
+    });
+});
+
+function loadModelStatus() {
+    $.get('/api/models/status')
+        .done(function(data) {
+            updateModelStatus('granite', data.granite);
+            updateModelStatus('llama', data.llama);
+            updateModelStatus('mistral', data.mistral);
+        })
+        .fail(function() {
+            updateModelStatus('granite', false);
+            updateModelStatus('llama', false);
+            updateModelStatus('mistral', false);
+        });
+}
+
+function updateModelStatus(model, isLoaded) {
+    const statusElement = $(`#${model}Status`);
+    const dot = statusElement.find('.status-dot');
+    const text = statusElement.find('.status-text');
+
+    if (isLoaded) {
+        dot.removeClass('error').addClass('ready');
+        text.text('Ready');
+    } else {
+        dot.removeClass('ready').addClass('error');
+        text.text('Loading...');
+    }
+}
+
+function animateStats() {
+    $('.stat-number').each(function() {
+        const $this = $(this);
+        const target = parseInt($this.data('target'));
+        
+        $({ counter: 0 }).animate({ counter: target }, {
+            duration: 2000,
+            easing: 'swing',
+            step: function() {
+                $this.text(Math.ceil(this.counter));
+            },
+            complete: function() {
+                $this.text(target);
+            }
+        });
+    });
+}
+
+// Professional Demo Audio Function
+function playDemoAudio() {
+    const demoAudio = document.getElementById('demoAudio');
+    const playBtn = document.querySelector('.btn-demo-play');
+
+    if (demoAudio.paused) {
+        demoAudio.play().then(() => {
+            playBtn.innerHTML = '<i class="fas fa-pause-circle me-2"></i>Pause Sample';
+            playBtn.style.background = 'linear-gradient(135deg, rgba(220, 53, 69, 0.9) 0%, rgba(255, 107, 107, 0.9) 100%)';
+        }).catch(error => {
+            console.error('Demo audio playback failed:', error);
+            alert('Demo audio not available. Please create an audiobook to test the functionality!');
+        });
+    } else {
+        demoAudio.pause();
+        playBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Listen to Sample Audiobook';
+        playBtn.style.background = 'linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 107, 107, 0.9) 100%)';
+    }
+
+    demoAudio.addEventListener('ended', function() {
+        playBtn.innerHTML = '<i class="fas fa-play-circle me-2"></i>Listen to Sample Audiobook';
+        playBtn.style.background = 'linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 107, 107, 0.9) 100%)';
+    });
+}
+</script>
+{% endblock %}

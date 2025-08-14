@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EchoVerse - Professional AI Audiobook Platform{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <!-- Custom Professional CSS -->
+    <link href="{{ url_for('static', filename='css/professional.css') }}" rel="stylesheet">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="professional-body">
+    <!-- Professional Navigation -->
+    <nav class="navbar navbar-expand-lg professional-nav fixed-top">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand professional-brand" href="{{ url_for('index') }}">
+                <div class="brand-container">
+                    <div class="brand-icon">
+                        <i class="fas fa-waveform-lines"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">EchoVerse</span>
+                        <span class="brand-tagline">Professional AI Platform</span>
+                    </div>
+                </div>
+            </a>
+            
+            <button class="navbar-toggler professional-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="{{ url_for('index') }}">
+                            <i class="fas fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="{{ url_for('create') }}">
+                            <i class="fas fa-microphone-lines"></i>
+                            <span>Create</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link professional-nav-link" href="{{ url_for('features') }}">
+                            <i class="fas fa-sparkles"></i>
+                            <span>AI Features</span>
+                        </a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle professional-nav-link" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="fas fa-brain"></i>
+                            <span>AI Models</span>
+                        </a>
+                        <ul class="dropdown-menu professional-dropdown">
+                            <li><a class="dropdown-item" href="#" id="initializeSystem">
+                                <i class="fas fa-rocket text-primary"></i>
+                                <div class="dropdown-content">
+                                    <span class="dropdown-title">Initialize System</span>
+                                    <span class="dropdown-desc">Start all AI models</span>
+                                </div>
+                            </a></li>
+                            <li><a class="dropdown-item" href="#" id="checkSystemStatus">
+                                <i class="fas fa-heartbeat text-success"></i>
+                                <div class="dropdown-content">
+                                    <span class="dropdown-title">System Status</span>
+                                    <span class="dropdown-desc">Check model health</span>
+                                </div>
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="#" id="viewSystemLogs">
+                                <i class="fas fa-file-lines text-info"></i>
+                                <div class="dropdown-content">
+                                    <span class="dropdown-title">System Logs</span>
+                                    <span class="dropdown-desc">View activity logs</span>
+                                </div>
+                            </a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <div class="system-status-indicator" id="systemStatusIndicator">
+                            <div class="status-dot status-loading"></div>
+                            <span class="status-text">Initializing...</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Alert Container -->
+        <div class="alert-container" id="alertContainer"></div>
+        
+        <!-- Page Content -->
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Professional Footer -->
+    <footer class="professional-footer">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <div class="footer-brand">
+                        <i class="fas fa-waveform-lines me-2"></i>
+                        <span class="fw-bold">EchoVerse</span>
+                        <span class="text-muted ms-2">Professional AI Platform</span>
+                    </div>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <div class="footer-info">
+                        <span class="text-muted">Powered by IBM Granite 3.2 + Free LLM APIs</span>
+                        <div class="footer-badges mt-1">
+                            <span class="badge bg-primary">AI-Powered</span>
+                            <span class="badge bg-success">Professional</span>
+                            <span class="badge bg-info">Enterprise-Ready</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+                <div class="spinner-ring"></div>
+            </div>
+            <h4 class="loading-title">Processing with AI</h4>
+            <p class="loading-text" id="loadingText">Initializing professional AI models...</p>
+            <div class="loading-progress">
+                <div class="progress-bar" id="loadingProgress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- Custom Professional JS -->
+    <script src="{{ url_for('static', filename='js/professional.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Professional initialization
+        $(document).ready(function() {
+            // Initialize professional features
+            ProfessionalEchoVerse.init();
+            
+            // Check system status on load
+            setTimeout(function() {
+                checkSystemStatus();
+            }, 1000);
+        });
+
+        // System initialization
+        $('#initializeSystem').click(function(e) {
+            e.preventDefault();
+            initializeSystem();
+        });
+
+        // System status check
+        $('#checkSystemStatus').click(function(e) {
+            e.preventDefault();
+            checkSystemStatus();
+        });
+
+        // Professional functions
+        function initializeSystem() {
+            showLoadingOverlay('Initializing Professional AI System...');
+            updateLoadingProgress(0);
+            
+            $.post('/api/initialize')
+                .done(function(data) {
+                    updateLoadingProgress(100);
+                    setTimeout(function() {
+                        hideLoadingOverlay();
+                        if (data.status === 'success') {
+                            showProfessionalAlert('System initialized successfully!', 'success');
+                            updateSystemStatus('ready', 'System Ready');
+                        } else {
+                            showProfessionalAlert('System initialization failed: ' + data.message, 'danger');
+                            updateSystemStatus('error', 'System Error');
+                        }
+                    }, 500);
+                })
+                .fail(function() {
+                    hideLoadingOverlay();
+                    showProfessionalAlert('Failed to initialize system', 'danger');
+                    updateSystemStatus('error', 'Connection Error');
+                });
+        }
+
+        function checkSystemStatus() {
+            $.get('/api/health')
+                .done(function(data) {
+                    if (data.status === 'healthy') {
+                        updateSystemStatus('ready', 'System Healthy');
+                        showProfessionalAlert('All systems operational', 'success');
+                    } else {
+                        updateSystemStatus('warning', 'System Issues');
+                        showProfessionalAlert('System health check failed', 'warning');
+                    }
+                })
+                .fail(function() {
+                    updateSystemStatus('error', 'Connection Error');
+                    showProfessionalAlert('Unable to check system status', 'danger');
+                });
+        }
+
+        function updateSystemStatus(status, text) {
+            const indicator = $('#systemStatusIndicator');
+            const dot = indicator.find('.status-dot');
+            const textEl = indicator.find('.status-text');
+            
+            dot.removeClass('status-loading status-ready status-error status-warning');
+            dot.addClass('status-' + status);
+            textEl.text(text);
+        }
+
+        function showLoadingOverlay(text) {
+            $('#loadingText').text(text);
+            $('#loadingOverlay').addClass('show');
+        }
+
+        function hideLoadingOverlay() {
+            $('#loadingOverlay').removeClass('show');
+        }
+
+        function updateLoadingProgress(percent) {
+            $('#loadingProgress').css('width', percent + '%');
+        }
+
+        function showProfessionalAlert(message, type) {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show professional-alert animate__animated animate__fadeInDown" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            
+            $('#alertContainer').html(alertHtml);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(function() {
+                $('.professional-alert').alert('close');
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

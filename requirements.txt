@@ -1,0 +1,32 @@
+# EchoVerse - Professional AI Audiobook Creation Platform
+# Python 3.13 Compatible Version
+
+# Core Flask Framework (REQUIRED)
+Flask>=3.0.0
+Werkzeug>=3.0.0
+
+# Environment & Configuration (REQUIRED)
+python-dotenv>=1.0.0
+
+# HTTP Requests (REQUIRED)
+requests>=2.31.0
+
+# Audio Processing (REQUIRED)
+gtts>=2.4.0
+
+# File Processing (REQUIRED)
+python-docx>=1.1.0
+PyPDF2>=3.0.1
+
+# AI/ML APIs (REQUIRED)
+groq>=0.4.1
+
+# Utilities (REQUIRED)
+python-dateutil>=2.8.2
+pytz>=2023.3
+
+# Production Server (Optional)
+gunicorn>=21.2.0
+
+# Development Tools (Optional)
+pytest>=7.4.0

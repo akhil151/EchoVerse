@@ -1,0 +1,2321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EchoVerse - AI-Powered Audiobook Creation{% endblock %}</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Enhanced Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+    <!-- Particles.js for background effects -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <!-- Custom CSS -->
+    <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+
+    <!-- Live Wallpaper System CSS -->
+    <style>
+    /* Live Wallpaper System */
+    .live-wallpaper-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        z-index: -1;
+    }
+
+    .wallpaper-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 2s ease-in-out;
+    }
+
+    .wallpaper-layer.active {
+        opacity: 1;
+    }
+
+    .wallpaper-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        filter: brightness(0.7) contrast(1.1) saturate(1.2);
+    }
+
+    .dynamic-gradient-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(
+            135deg,
+            rgba(102, 126, 234, 0.3) 0%,
+            rgba(118, 75, 162, 0.4) 25%,
+            rgba(16, 185, 129, 0.3) 50%,
+            rgba(245, 87, 108, 0.4) 75%,
+            rgba(102, 126, 234, 0.3) 100%
+        );
+        background-size: 400% 400%;
+        animation: gradientShift 15s ease infinite;
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        25% { background-position: 100% 50%; }
+        50% { background-position: 100% 100%; }
+        75% { background-position: 0% 100%; }
+        100% { background-position: 0% 50%; }
+    }
+
+    .floating-particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background-image:
+            radial-gradient(2px 2px at 20px 30px, rgba(255, 255, 255, 0.3), transparent),
+            radial-gradient(2px 2px at 40px 70px, rgba(102, 126, 234, 0.4), transparent),
+            radial-gradient(1px 1px at 90px 40px, rgba(16, 185, 129, 0.3), transparent),
+            radial-gradient(1px 1px at 130px 80px, rgba(245, 87, 108, 0.3), transparent),
+            radial-gradient(2px 2px at 160px 30px, rgba(118, 75, 162, 0.3), transparent);
+        background-repeat: repeat;
+        background-size: 200px 200px;
+        animation: particleFloat 20s linear infinite;
+    }
+
+    @keyframes particleFloat {
+        0% { transform: translateY(0px) translateX(0px); }
+        25% { transform: translateY(-10px) translateX(5px); }
+        50% { transform: translateY(-5px) translateX(-5px); }
+        75% { transform: translateY(-15px) translateX(3px); }
+        100% { transform: translateY(0px) translateX(0px); }
+    }
+
+    /* Wallpaper Controls */
+    .wallpaper-controls {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .control-label {
+        display: flex;
+        align-items: center;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .wallpaper-options {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .wallpaper-btn {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 10px;
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        min-width: 60px;
+    }
+
+    .wallpaper-btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .wallpaper-btn.active {
+        background: rgba(102, 126, 234, 0.6);
+        border-color: rgba(102, 126, 234, 0.8);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    }
+
+    .wallpaper-btn i {
+        font-size: 1.2rem;
+    }
+
+    /* Dashboard-specific navbar height reduction */
+    .dashboard-page .world-class-nav {
+        height: 65px;
+        padding: 0.5rem 0;
+    }
+
+    .dashboard-page .main-content {
+        margin-top: 65px;
+    }
+
+    /* Enhanced Typography System */
+    :root {
+        /* Typography Scale */
+        --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        --font-secondary: 'Poppins', sans-serif;
+        --font-display: 'Playfair Display', serif;
+        --font-mono: 'JetBrains Mono', monospace;
+
+        /* Font Sizes - Perfect Scale */
+        --text-xs: 0.75rem;     /* 12px */
+        --text-sm: 0.875rem;    /* 14px */
+        --text-base: 1rem;      /* 16px */
+        --text-lg: 1.125rem;    /* 18px */
+        --text-xl: 1.25rem;     /* 20px */
+        --text-2xl: 1.5rem;     /* 24px */
+        --text-3xl: 1.875rem;   /* 30px */
+        --text-4xl: 2.25rem;    /* 36px */
+        --text-5xl: 3rem;       /* 48px */
+        --text-6xl: 3.75rem;    /* 60px */
+
+        /* Line Heights */
+        --leading-tight: 1.25;
+        --leading-snug: 1.375;
+        --leading-normal: 1.5;
+        --leading-relaxed: 1.625;
+        --leading-loose: 2;
+
+        /* Enhanced Color Palette */
+        --primary-50: #f0f4ff;
+        --primary-100: #e0e9ff;
+        --primary-200: #c7d8ff;
+        --primary-300: #a5c0ff;
+        --primary-400: #8aa2ff;
+        --primary-500: #667eea;
+        --primary-600: #5a67d8;
+        --primary-700: #4c51bf;
+        --primary-800: #434190;
+        --primary-900: #3c366b;
+
+        --secondary-50: #faf5ff;
+        --secondary-100: #f3e8ff;
+        --secondary-200: #e9d5ff;
+        --secondary-300: #d8b4fe;
+        --secondary-400: #c084fc;
+        --secondary-500: #764ba2;
+        --secondary-600: #9333ea;
+        --secondary-700: #7c3aed;
+        --secondary-800: #6b21a8;
+        --secondary-900: #581c87;
+
+        --success-50: #f0fdf4;
+        --success-100: #dcfce7;
+        --success-200: #bbf7d0;
+        --success-300: #86efac;
+        --success-400: #4ade80;
+        --success-500: #22c55e;
+        --success-600: #16a34a;
+        --success-700: #15803d;
+        --success-800: #166534;
+        --success-900: #14532d;
+
+        --warning-50: #fffbeb;
+        --warning-100: #fef3c7;
+        --warning-200: #fde68a;
+        --warning-300: #fcd34d;
+        --warning-400: #fbbf24;
+        --warning-500: #f59e0b;
+        --warning-600: #d97706;
+        --warning-700: #b45309;
+        --warning-800: #92400e;
+        --warning-900: #78350f;
+
+        --danger-50: #fef2f2;
+        --danger-100: #fee2e2;
+        --danger-200: #fecaca;
+        --danger-300: #fca5a5;
+        --danger-400: #f87171;
+        --danger-500: #ef4444;
+        --danger-600: #dc2626;
+        --danger-700: #b91c1c;
+        --danger-800: #991b1b;
+        --danger-900: #7f1d1d;
+
+        /* Neutral Colors */
+        --gray-50: #f9fafb;
+        --gray-100: #f3f4f6;
+        --gray-200: #e5e7eb;
+        --gray-300: #d1d5db;
+        --gray-400: #9ca3af;
+        --gray-500: #6b7280;
+        --gray-600: #4b5563;
+        --gray-700: #374151;
+        --gray-800: #1f2937;
+        --gray-900: #111827;
+
+        /* Semantic Colors */
+        --text-primary: var(--gray-900);
+        --text-secondary: var(--gray-600);
+        --text-muted: var(--gray-500);
+        --text-inverse: white;
+
+        --bg-primary: white;
+        --bg-secondary: var(--gray-50);
+        --bg-muted: var(--gray-100);
+
+        --border-light: var(--gray-200);
+        --border-medium: var(--gray-300);
+        --border-dark: var(--gray-400);
+
+        /* Enhanced Shadows */
+        --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        --shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        --shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+
+        /* Enhanced Gradients */
+        --gradient-primary: linear-gradient(135deg, var(--primary-500) 0%, var(--secondary-500) 100%);
+        --gradient-success: linear-gradient(135deg, var(--success-400) 0%, var(--success-600) 100%);
+        --gradient-warning: linear-gradient(135deg, var(--warning-400) 0%, var(--warning-600) 100%);
+        --gradient-danger: linear-gradient(135deg, var(--danger-400) 0%, var(--danger-600) 100%);
+        --gradient-rainbow: linear-gradient(135deg,
+            var(--primary-500) 0%,
+            var(--secondary-500) 25%,
+            var(--success-500) 50%,
+            var(--warning-500) 75%,
+            var(--danger-500) 100%);
+    }
+
+    /* Enhanced Typography Classes */
+    .font-primary { font-family: var(--font-primary); }
+    .font-secondary { font-family: var(--font-secondary); }
+    .font-display { font-family: var(--font-display); }
+    .font-mono { font-family: var(--font-mono); }
+
+    .text-xs { font-size: var(--text-xs); }
+    .text-sm { font-size: var(--text-sm); }
+    .text-base { font-size: var(--text-base); }
+    .text-lg { font-size: var(--text-lg); }
+    .text-xl { font-size: var(--text-xl); }
+    .text-2xl { font-size: var(--text-2xl); }
+    .text-3xl { font-size: var(--text-3xl); }
+    .text-4xl { font-size: var(--text-4xl); }
+    .text-5xl { font-size: var(--text-5xl); }
+    .text-6xl { font-size: var(--text-6xl); }
+
+    .leading-tight { line-height: var(--leading-tight); }
+    .leading-snug { line-height: var(--leading-snug); }
+    .leading-normal { line-height: var(--leading-normal); }
+    .leading-relaxed { line-height: var(--leading-relaxed); }
+    .leading-loose { line-height: var(--leading-loose); }
+
+    /* Enhanced Text Colors */
+    .text-primary { color: var(--text-primary); }
+    .text-secondary { color: var(--text-secondary); }
+    .text-muted { color: var(--text-muted); }
+    .text-inverse { color: var(--text-inverse); }
+
+    /* Enhanced Background Colors */
+    .bg-primary { background-color: var(--bg-primary); }
+    .bg-secondary { background-color: var(--bg-secondary); }
+    .bg-muted { background-color: var(--bg-muted); }
+
+    /* Global Typography Improvements */
+    body {
+        font-family: var(--font-primary);
+        font-size: var(--text-base);
+        line-height: var(--leading-normal);
+        color: var(--text-primary);
+        font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+        font-family: var(--font-secondary);
+        font-weight: 700;
+        line-height: var(--leading-tight);
+        letter-spacing: -0.025em;
+        color: var(--text-primary);
+    }
+
+    h1 { font-size: var(--text-5xl); }
+    h2 { font-size: var(--text-4xl); }
+    h3 { font-size: var(--text-3xl); }
+    h4 { font-size: var(--text-2xl); }
+    h5 { font-size: var(--text-xl); }
+    h6 { font-size: var(--text-lg); }
+
+    .display-1 {
+        font-family: var(--font-display);
+        font-size: var(--text-6xl);
+        font-weight: 600;
+        line-height: var(--leading-tight);
+    }
+
+    .display-2 {
+        font-family: var(--font-display);
+        font-size: var(--text-5xl);
+        font-weight: 600;
+        line-height: var(--leading-tight);
+    }
+
+    p {
+        line-height: var(--leading-relaxed);
+        color: var(--text-secondary);
+    }
+
+    .lead {
+        font-size: var(--text-lg);
+        line-height: var(--leading-relaxed);
+        color: var(--text-secondary);
+    }
+
+    /* Enhanced Button Typography */
+    .btn {
+        font-family: var(--font-secondary);
+        font-weight: 600;
+        letter-spacing: 0.025em;
+        text-transform: none;
+    }
+
+    /* Code Typography */
+    code, pre {
+        font-family: var(--font-mono);
+        font-size: 0.875em;
+    }
+
+    /* Advanced Animations and Micro-Interactions */
+
+    /* Smooth Transitions */
+    * {
+        transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+                   box-shadow 0.2s ease, transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    /* Enhanced Button Interactions */
+    .btn {
+        position: relative;
+        overflow: hidden;
+        transform: translateZ(0);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+        transition: left 0.5s ease;
+    }
+
+    .btn:hover::before {
+        left: 100%;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .btn:active {
+        transform: translateY(0);
+        transition: transform 0.1s ease;
+    }
+
+    /* Card Hover Effects */
+    .card, .professional-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .card:hover, .professional-card:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: var(--shadow-xl);
+    }
+
+    /* Navbar Scroll Animation */
+    .world-class-nav {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .world-class-nav.scrolled {
+        backdrop-filter: blur(20px);
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: var(--shadow-md);
+    }
+
+    /* Loading Animations */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInDown {
+        from {
+            opacity: 0;
+            transform: translateY(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeInLeft {
+        from {
+            opacity: 0;
+            transform: translateX(-30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes fadeInRight {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes scaleIn {
+        from {
+            opacity: 0;
+            transform: scale(0.9);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
+    }
+
+    @keyframes slideInUp {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+
+    /* Stagger Animation Classes */
+    .animate-fade-in-up {
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .animate-fade-in-down {
+        animation: fadeInDown 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .animate-fade-in-left {
+        animation: fadeInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .animate-fade-in-right {
+        animation: fadeInRight 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    .animate-scale-in {
+        animation: scaleIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Stagger Delays */
+    .delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-400 { animation-delay: 0.4s; }
+    .delay-500 { animation-delay: 0.5s; }
+
+    /* Interactive Elements */
+    .interactive-element {
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .interactive-element:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
+    /* Ripple Effect */
+    .ripple {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .ripple::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .ripple:active::after {
+        width: 300px;
+        height: 300px;
+    }
+
+    /* Floating Animation */
+    @keyframes float {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+
+    .float-animation {
+        animation: float 3s ease-in-out infinite;
+    }
+
+    /* Glow Effects */
+    .glow-on-hover {
+        transition: all 0.3s ease;
+    }
+
+    .glow-on-hover:hover {
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.5);
+    }
+
+    /* Text Reveal Animation */
+    .text-reveal {
+        overflow: hidden;
+        position: relative;
+    }
+
+    .text-reveal::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--primary-500);
+        transform: translateX(-100%);
+        animation: textReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes textReveal {
+        0% { transform: translateX(-100%); }
+        50% { transform: translateX(0); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* Morphing Shapes */
+    .morphing-shape {
+        transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .morphing-shape:hover {
+        border-radius: 50%;
+        transform: rotate(180deg);
+    }
+
+    /* Progress Indicators */
+    .progress-ring {
+        transform: rotate(-90deg);
+    }
+
+    .progress-ring-circle {
+        transition: stroke-dashoffset 0.35s;
+        transform-origin: 50% 50%;
+    }
+
+    /* Skeleton Loading */
+    @keyframes skeleton-loading {
+        0% { background-position: -200px 0; }
+        100% { background-position: calc(200px + 100%) 0; }
+    }
+
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200px 100%;
+        animation: skeleton-loading 1.5s infinite;
+    }
+
+    /* Micro-interactions for Form Elements */
+    .form-control, .form-select {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .form-control:focus, .form-select:focus {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+        border-color: var(--primary-500);
+    }
+
+    /* Enhanced Modal Animations */
+    .modal.fade .modal-dialog {
+        transform: scale(0.8) translateY(-50px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .modal.show .modal-dialog {
+        transform: scale(1) translateY(0);
+    }
+
+    /* Tooltip Enhancements */
+    .tooltip {
+        animation: fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Page Transition */
+    .page-transition {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    /* Responsive Design Enhancements */
+
+    /* Mobile-first approach */
+    @media (max-width: 576px) {
+        :root {
+            --text-xs: 0.7rem;
+            --text-sm: 0.8rem;
+            --text-base: 0.9rem;
+            --text-lg: 1rem;
+            --text-xl: 1.1rem;
+            --text-2xl: 1.3rem;
+            --text-3xl: 1.6rem;
+            --text-4xl: 2rem;
+            --text-5xl: 2.5rem;
+            --text-6xl: 3rem;
+        }
+
+        .container-fluid {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .hero-section-modern {
+            padding: 2rem 0;
+        }
+
+        .hero-title {
+            font-size: var(--text-3xl);
+            line-height: var(--leading-tight);
+        }
+
+        .hero-description {
+            font-size: var(--text-sm);
+            line-height: var(--leading-relaxed);
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: var(--text-sm);
+        }
+
+        .wallpaper-controls {
+            flex-direction: column;
+            gap: 0.5rem;
+            padding: 0.75rem;
+        }
+
+        .wallpaper-options {
+            justify-content: center;
+        }
+
+        .wallpaper-btn {
+            min-width: 50px;
+            padding: 0.4rem;
+        }
+
+        .wallpaper-btn span {
+            font-size: 0.7rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .world-class-nav {
+            padding: 0.5rem 0;
+        }
+
+        .brand-text-wrapper {
+            display: none;
+        }
+
+        .hero-features {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .feature-item {
+            flex-direction: row;
+            gap: 0.75rem;
+            text-align: left;
+        }
+
+        .ai-showcase-container {
+            margin-top: 2rem;
+        }
+
+        .ai-model-card {
+            margin-bottom: 1rem;
+        }
+
+        .upload-features {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .format-badges {
+            gap: 0.3rem;
+        }
+
+        .format-badge-innovative {
+            padding: 0.3rem 0.6rem;
+            font-size: 0.7rem;
+        }
+    }
+
+    @media (max-width: 992px) {
+        .hero-section-modern .row {
+            text-align: center;
+        }
+
+        .hero-visual-modern {
+            margin-top: 3rem;
+        }
+
+        .creation-wizard {
+            padding: 1.5rem;
+        }
+
+        .step-indicator {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .step {
+            margin: 0 0.5rem;
+        }
+    }
+
+    /* High DPI Display Support */
+    @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+        body {
+            -webkit-font-smoothing: subpixel-antialiased;
+        }
+    }
+
+    /* Accessibility Enhancements */
+
+    /* Focus Management */
+    *:focus {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+        border-radius: 4px;
+    }
+
+    .btn:focus {
+        outline: 2px solid var(--primary-600);
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+    }
+
+    .form-control:focus, .form-select:focus {
+        outline: 2px solid var(--primary-500);
+        outline-offset: 2px;
+        border-color: var(--primary-500);
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+
+    /* Skip Links */
+    .skip-link {
+        position: absolute;
+        top: -40px;
+        left: 6px;
+        background: var(--primary-600);
+        color: white;
+        padding: 8px;
+        text-decoration: none;
+        border-radius: 4px;
+        z-index: 9999;
+        transition: top 0.3s ease;
+    }
+
+    .skip-link:focus {
+        top: 6px;
+    }
+
+    /* High Contrast Mode Support */
+    @media (prefers-contrast: high) {
+        :root {
+            --text-primary: #000000;
+            --text-secondary: #333333;
+            --bg-primary: #ffffff;
+            --border-light: #000000;
+            --border-medium: #000000;
+            --border-dark: #000000;
+        }
+
+        .btn {
+            border: 2px solid currentColor;
+        }
+
+        .card, .professional-card {
+            border: 2px solid var(--border-dark);
+        }
+    }
+
+    /* Reduced Motion Support */
+    @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+        }
+
+        .floating-particles,
+        .hero-particles,
+        .icon-pulse,
+        .processing-rings,
+        .success-burst {
+            animation: none !important;
+        }
+
+        .wallpaper-video {
+            animation: none !important;
+        }
+    }
+
+    /* Dark Mode Support */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --text-primary: #f9fafb;
+            --text-secondary: #d1d5db;
+            --text-muted: #9ca3af;
+            --bg-primary: #111827;
+            --bg-secondary: #1f2937;
+            --bg-muted: #374151;
+            --border-light: #374151;
+            --border-medium: #4b5563;
+            --border-dark: #6b7280;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .card, .professional-card {
+            background-color: var(--bg-secondary);
+            border-color: var(--border-medium);
+        }
+
+        .world-class-nav {
+            background: rgba(17, 24, 39, 0.95);
+        }
+
+        .world-class-nav.scrolled {
+            background: rgba(17, 24, 39, 0.98);
+        }
+    }
+
+    /* Print Styles */
+    @media print {
+        .world-class-nav,
+        .wallpaper-controls,
+        .btn,
+        .floating-particles,
+        .hero-particles {
+            display: none !important;
+        }
+
+        body {
+            background: white !important;
+            color: black !important;
+        }
+
+        .hero-section-modern {
+            background: none !important;
+        }
+
+        * {
+            box-shadow: none !important;
+            text-shadow: none !important;
+        }
+    }
+
+    /* Screen Reader Only Content */
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    .sr-only-focusable:focus {
+        position: static;
+        width: auto;
+        height: auto;
+        padding: inherit;
+        margin: inherit;
+        overflow: visible;
+        clip: auto;
+        white-space: normal;
+    }
+
+    /* Keyboard Navigation Enhancements */
+    .keyboard-navigation .btn:focus,
+    .keyboard-navigation .form-control:focus,
+    .keyboard-navigation .nav-link:focus {
+        outline: 3px solid var(--primary-500);
+        outline-offset: 2px;
+    }
+
+    /* Touch Device Optimizations */
+    @media (hover: none) and (pointer: coarse) {
+        .btn {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .wallpaper-btn {
+            min-height: 44px;
+            min-width: 44px;
+        }
+
+        .interactive-element:hover {
+            transform: none;
+        }
+
+        .btn:hover::before {
+            left: -100%;
+        }
+    }
+
+    /* Loading States for Accessibility */
+    .loading {
+        position: relative;
+    }
+
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.8);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .loading::before {
+        content: 'Loading...';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 1;
+        font-weight: 600;
+        color: var(--primary-600);
+    }
+
+    /* Enhanced Notification System */
+    .toast {
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .toast-progress {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 0 0 12px 12px;
+        overflow: hidden;
+    }
+
+    .toast-progress-bar {
+        height: 100%;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 0 0 12px 12px;
+    }
+
+    /* Enhanced Loading Overlay */
+    #loading-overlay {
+        backdrop-filter: blur(10px);
+    }
+
+    #loading-overlay .spinner-border {
+        border-color: rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+    }
+
+    .loading-text {
+        font-size: var(--text-lg);
+        font-weight: 500;
+        margin-top: 1rem;
+    }
+
+    /* Form Validation Enhancements */
+    .form-control.is-valid {
+        border-color: var(--success-500);
+        box-shadow: 0 0 0 0.2rem rgba(34, 197, 94, 0.25);
+    }
+
+    .form-control.is-invalid {
+        border-color: var(--danger-500);
+        box-shadow: 0 0 0 0.2rem rgba(239, 68, 68, 0.25);
+    }
+
+    .invalid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: var(--text-sm);
+        color: var(--danger-600);
+        animation: fadeInUp 0.3s ease;
+    }
+
+    .valid-feedback {
+        display: block;
+        width: 100%;
+        margin-top: 0.25rem;
+        font-size: var(--text-sm);
+        color: var(--success-600);
+        animation: fadeInUp 0.3s ease;
+    }
+
+    /* Enhanced Error States */
+    .error-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: var(--text-secondary);
+    }
+
+    .error-state .error-icon {
+        font-size: 4rem;
+        color: var(--danger-500);
+        margin-bottom: 1.5rem;
+    }
+
+    .error-state .error-title {
+        font-size: var(--text-2xl);
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .error-state .error-message {
+        font-size: var(--text-lg);
+        line-height: var(--leading-relaxed);
+        margin-bottom: 2rem;
+    }
+
+    .error-state .error-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    /* Connection Status Indicator */
+    .connection-status {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: var(--text-sm);
+        font-weight: 500;
+        z-index: 9999;
+        transition: all 0.3s ease;
+        transform: translateY(100px);
+    }
+
+    .connection-status.online {
+        background: var(--success-500);
+        color: white;
+        transform: translateY(0);
+    }
+
+    .connection-status.offline {
+        background: var(--danger-500);
+        color: white;
+        transform: translateY(0);
+    }
+
+    /* Page Transition States */
+    .page-transitioning {
+        opacity: 0.8;
+        pointer-events: none;
+    }
+
+    .page-transitioning * {
+        transition: none !important;
+    }
+
+    /* Enhanced Modal Styles */
+    .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: var(--shadow-2xl);
+        backdrop-filter: blur(10px);
+    }
+
+    .modal-header {
+        border-bottom: 1px solid var(--border-light);
+        border-radius: 16px 16px 0 0;
+    }
+
+    .modal-footer {
+        border-top: 1px solid var(--border-light);
+        border-radius: 0 0 16px 16px;
+    }
+
+    /* Confirmation Dialog Styles */
+    .confirmation-dialog .modal-content {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .confirmation-dialog .confirmation-icon {
+        font-size: 3rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .confirmation-dialog .confirmation-title {
+        font-size: var(--text-xl);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+
+    .confirmation-dialog .confirmation-message {
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+        line-height: var(--leading-relaxed);
+    }
+
+    .confirmation-dialog .confirmation-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+    }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎧</text></svg>">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+    <!-- Skip Links for Accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#navigation" class="skip-link">Skip to navigation</a>
+
+    <!-- World-Class Professional Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark fixed-top world-class-nav" id="navigation" role="navigation" aria-label="Main navigation">
+        <div class="container-fluid px-4">
+            <!-- Brand Section -->
+            <a class="navbar-brand d-flex align-items-center brand-container" href="{{ url_for('index') }}" data-aos="fade-right" aria-label="EchoVerse - AI-Powered Professional Platform"
+                <div class="brand-logo-wrapper">
+                    <div class="brand-logo">
+                        <i class="fas fa-headphones brand-icon"></i>
+                        <div class="logo-glow"></div>
+                    </div>
+                </div>
+                <div class="brand-text-wrapper">
+                    <div class="brand-name">EchoVerse</div>
+                    <div class="brand-tagline">AI-Powered Professional Platform</div>
+                </div>
+                <div class="brand-badge">
+                    <span class="badge-text">IBM Granite 3.2</span>
+                    <div class="badge-glow"></div>
+                </div>
+            </a>
+
+            <!-- Mobile Toggle -->
+            <button class="navbar-toggler custom-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="toggler-line"></span>
+                <span class="toggler-line"></span>
+                <span class="toggler-line"></span>
+            </button>
+
+            <!-- Navigation Menu -->
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto nav-center">
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern" href="{{ url_for('index') }}">
+                            <div class="nav-icon-wrapper">
+                                <i class="fas fa-home nav-icon"></i>
+                            </div>
+                            <span class="nav-text">Dashboard</span>
+                            <div class="nav-indicator"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern" href="{{ url_for('create') }}">
+                            <div class="nav-icon-wrapper">
+                                <i class="fas fa-magic nav-icon"></i>
+                            </div>
+                            <span class="nav-text">Create Audiobook</span>
+                            <div class="nav-indicator"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern" href="{{ url_for('features') }}">
+                            <div class="nav-icon-wrapper">
+                                <i class="fas fa-rocket nav-icon"></i>
+                            </div>
+                            <span class="nav-text">AI Features</span>
+                            <div class="nav-indicator"></div>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link nav-link-modern" href="#" onclick="showJuryPresentation()">
+                            <div class="nav-icon-wrapper">
+                                <i class="fas fa-trophy nav-icon"></i>
+                            </div>
+                            <span class="nav-text">Jury Demo</span>
+                            <div class="nav-indicator"></div>
+                        </a>
+                    </li>
+                </ul>
+
+                <!-- Right Side Actions -->
+                <ul class="navbar-nav nav-actions">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle ai-status-btn" href="#" id="modelsDropdown" role="button" data-bs-toggle="dropdown">
+                            <div class="ai-status-indicator">
+                                <div class="status-dot status-checking"></div>
+                                <div class="status-pulse"></div>
+                            </div>
+                            <span class="ai-status-text">AI Models</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-modern">
+                            <li class="dropdown-header">
+                                <i class="fas fa-brain me-2"></i>AI Model Status
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item dropdown-item-modern" href="#" id="modelStatus">
+                                <i class="fas fa-circle text-warning me-2"></i>
+                                <span>Check Status</span>
+                                <div class="item-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-modern" href="#" id="testGranite">
+                                <i class="fas fa-microchip text-primary me-2"></i>
+                                <span>Test Granite Model</span>
+                                <div class="item-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </a></li>
+                            <li><a class="dropdown-item dropdown-item-modern" href="#" id="initializeModels">
+                                <i class="fas fa-download me-2"></i>
+                                <span>Initialize Models</span>
+                                <div class="item-arrow"><i class="fas fa-chevron-right"></i></div>
+                            </a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Navigation Background Effects -->
+        <div class="nav-bg-effect"></div>
+        <div class="nav-border-glow"></div>
+    </nav>
+
+    <!-- Background Video (for professional pages) -->
+    <div id="background-video-container" class="d-none">
+        <video autoplay muted loop id="background-video">
+            <source src="https://cdn.pixabay.com/vimeo/465564738/sound-waves-41488.mp4?width=1280&hash=b8b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5b5" type="video/mp4">
+            <!-- Fallback to a simple gradient animation -->
+        </video>
+        <div class="video-overlay"></div>
+    </div>
+
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Alert Messages -->
+            <div id="alertContainer"></div>
+
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-dark text-light py-4 mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">
+                        <i class="fas fa-headphones me-2"></i>EchoVerse
+                    </h5>
+                    <p class="text-muted">
+                        Professional AI-powered audiobook creation platform with IBM Granite 3.2 integration.
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="mb-3">AI Models</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-microchip me-2 text-primary"></i>IBM Granite 3.2</li>
+                        <li><i class="fas fa-robot me-2 text-success"></i>Llama 3.1</li>
+                        <li><i class="fas fa-brain me-2 text-info"></i>Mistral 7B</li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="mb-3">Features</h6>
+                    <ul class="list-unstyled">
+                        <li><i class="fas fa-magic me-2 text-warning"></i>Tone Transformation</li>
+                        <li><i class="fas fa-heart me-2 text-danger"></i>Emotion Analysis</li>
+                        <li><i class="fas fa-volume-up me-2 text-primary"></i>Advanced TTS</li>
+                    </ul>
+                </div>
+            </div>
+            <hr class="my-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <p class="mb-0 text-muted">
+                        &copy; 2024 EchoVerse. Professional audiobook creation platform.
+                    </p>
+                </div>
+                <div class="col-md-6 text-md-end">
+                    <span class="badge bg-success me-2">
+                        <i class="fas fa-check me-1"></i>IBM Granite Integrated
+                    </span>
+                    <span class="badge bg-info">
+                        <i class="fas fa-shield-alt me-1"></i>Enterprise Grade
+                    </span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <h5 id="loadingTitle">Processing...</h5>
+                    <p id="loadingMessage" class="text-muted mb-0">Please wait while we process your request.</p>
+                    <div class="progress mt-3" style="height: 6px;">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                             role="progressbar" style="width: 0%" id="loadingProgress"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+
+    <script>
+        // Global JavaScript functions
+        $(document).ready(function() {
+            // Initialize tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+
+            // Model status check
+            $('#modelStatus').click(function(e) {
+                e.preventDefault();
+                checkModelStatus();
+            });
+
+            // Initialize models
+            $('#initializeModels').click(function(e) {
+                e.preventDefault();
+                initializeModels();
+            });
+        });
+
+        // Show alert message
+        function showAlert(message, type = 'info') {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            $('#alertContainer').append(alertHtml);
+            
+            // Auto-dismiss after 5 seconds
+            setTimeout(function() {
+                $('.alert').fadeOut();
+            }, 5000);
+        }
+
+        // Show loading modal
+        function showLoading(title = 'Processing...', message = 'Please wait while we process your request.') {
+            $('#loadingTitle').text(title);
+            $('#loadingMessage').text(message);
+            $('#loadingProgress').css('width', '0%');
+            $('#loadingModal').modal('show');
+        }
+
+        // Hide loading modal
+        function hideLoading() {
+            $('#loadingModal').modal('hide');
+        }
+
+        // Update loading progress
+        function updateLoadingProgress(percent, message = null) {
+            $('#loadingProgress').css('width', percent + '%');
+            if (message) {
+                $('#loadingMessage').text(message);
+            }
+        }
+
+        // Check model status
+        function checkModelStatus() {
+            $.get('/api/models/status')
+                .done(function(data) {
+                    let statusHtml = '<div class="modal fade" id="statusModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">';
+                    statusHtml += '<div class="modal-header"><h5 class="modal-title">AI Model Status</h5>';
+                    statusHtml += '<button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>';
+                    statusHtml += '<div class="modal-body">';
+                    
+                    statusHtml += '<div class="row">';
+                    statusHtml += `<div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-microchip me-2"></i>IBM Granite 3.2</h6>
+                                <span class="badge bg-${data.granite ? 'success' : 'warning'}">
+                                    ${data.granite ? 'Loaded' : 'Not Loaded'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>`;
+                    
+                    statusHtml += `<div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-robot me-2"></i>Llama 3.1</h6>
+                                <span class="badge bg-${data.llama ? 'success' : 'warning'}">
+                                    ${data.llama ? 'Loaded' : 'Not Loaded'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>`;
+                    
+                    statusHtml += `<div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-brain me-2"></i>Mistral 7B</h6>
+                                <span class="badge bg-${data.mistral ? 'success' : 'warning'}">
+                                    ${data.mistral ? 'Loaded' : 'Not Loaded'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>`;
+                    
+                    statusHtml += `<div class="col-md-6 mb-3">
+                        <div class="card">
+                            <div class="card-body">
+                                <h6><i class="fas fa-volume-up me-2"></i>TTS Engine</h6>
+                                <span class="badge bg-${data.tts ? 'success' : 'warning'}">
+                                    ${data.tts ? 'Ready' : 'Not Ready'}
+                                </span>
+                            </div>
+                        </div>
+                    </div>`;
+                    
+                    statusHtml += '</div>';
+                    statusHtml += `<p class="text-muted small">Last updated: ${new Date(data.timestamp).toLocaleString()}</p>`;
+                    statusHtml += '</div></div></div></div>';
+                    
+                    $('body').append(statusHtml);
+                    $('#statusModal').modal('show');
+                    $('#statusModal').on('hidden.bs.modal', function() {
+                        $(this).remove();
+                    });
+                })
+                .fail(function() {
+                    showAlert('Failed to check model status', 'danger');
+                });
+        }
+
+        // Initialize models
+        function initializeModels() {
+            showLoading('Initializing AI Models...', 'This may take a few minutes for the first time.');
+            
+            $.post('/api/initialize')
+                .done(function(data) {
+                    hideLoading();
+                    if (data.status === 'success') {
+                        showAlert('AI models initialized successfully!', 'success');
+                    } else {
+                        showAlert('Failed to initialize models: ' + data.message, 'danger');
+                    }
+                })
+                .fail(function() {
+                    hideLoading();
+                    showAlert('Failed to initialize models', 'danger');
+                });
+        }
+
+        // Initialize AOS animations
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true,
+            mirror: false
+        });
+
+        // Set active navigation state
+        const currentPath = window.location.pathname;
+        $('.nav-link-modern').each(function() {
+            const href = $(this).attr('href');
+            if (href && (currentPath === href || (href !== '/' && currentPath.startsWith(href)))) {
+                $(this).addClass('active');
+            }
+        });
+
+        // Jury Presentation Mode
+        function showJuryPresentation() {
+            const modal = `
+                <div class="modal fade" id="juryModal" tabindex="-1">
+                    <div class="modal-dialog modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header bg-gradient-primary text-white">
+                                <h5 class="modal-title"><i class="fas fa-presentation me-2"></i>EchoVerse - Jury Presentation</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-star text-warning me-2"></i>Key Features for Jury</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>IBM Granite 3.2 Integration</strong> - Mandatory AI model as required</li>
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>Multiple Free LLM Models</strong> - Groq, Hugging Face, Cohere, etc.</li>
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>Professional UI</strong> - International-level design</li>
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>8 Tone Styles</strong> - Dramatic, Suspenseful, Inspiring, etc.</li>
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>Real-time Processing</strong> - Live status updates</li>
+                                            <li><i class="fas fa-check text-success me-2"></i><strong>High-Quality Audio</strong> - Professional MP3 generation</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6><i class="fas fa-magic text-primary me-2"></i>Unique Innovations</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Story Generator</strong> - AI-powered creative writing</li>
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Emotion Analysis</strong> - Smart voice recommendations</li>
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Multi-Model Fallback</strong> - Never fails system</li>
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Professional Animations</strong> - Smooth transitions</li>
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Google Colab Integration</strong> - Cloud-based processing</li>
+                                            <li><i class="fas fa-lightbulb text-warning me-2"></i><strong>Responsive Design</strong> - Works on all devices</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="text-center mt-4">
+                                    <button class="btn btn-primary btn-lg me-3" onclick="startJuryDemo()">
+                                        <i class="fas fa-play me-2"></i>Start Live Demo
+                                    </button>
+                                    <button class="btn btn-outline-primary btn-lg" onclick="showTechnicalDetails()">
+                                        <i class="fas fa-cog me-2"></i>Technical Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('body').append(modal);
+            $('#juryModal').modal('show');
+            $('#juryModal').on('hidden.bs.modal', function() {
+                $(this).remove();
+            });
+        }
+
+        // Story Generator Feature
+        function showStoryGenerator() {
+            const modal = `
+                <div class="modal fade" id="storyModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-gradient-success text-white">
+                                <h5 class="modal-title"><i class="fas fa-book-open me-2"></i>AI Story Generator</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="mb-3">
+                                    <label class="form-label">Story Theme</label>
+                                    <select class="form-select" id="storyTheme">
+                                        <option value="adventure">🏔️ Adventure</option>
+                                        <option value="mystery">🔍 Mystery</option>
+                                        <option value="romance">💕 Romance</option>
+                                        <option value="scifi">🚀 Science Fiction</option>
+                                        <option value="fantasy">🧙‍♂️ Fantasy</option>
+                                        <option value="horror">👻 Horror</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Story Length</label>
+                                    <select class="form-select" id="storyLength">
+                                        <option value="short">Short (2-3 minutes)</option>
+                                        <option value="medium">Medium (5-7 minutes)</option>
+                                        <option value="long">Long (10-15 minutes)</option>
+                                    </select>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Main Character</label>
+                                    <input type="text" class="form-control" id="mainCharacter" placeholder="e.g., A brave knight, A curious scientist...">
+                                </div>
+                                <div class="text-center">
+                                    <button class="btn btn-success btn-lg" onclick="generateStory()">
+                                        <i class="fas fa-magic me-2"></i>Generate Story with AI
+                                    </button>
+                                </div>
+                                <div id="generatedStory" class="mt-4 d-none">
+                                    <h6>Generated Story:</h6>
+                                    <div class="border rounded p-3 bg-light" id="storyContent"></div>
+                                    <div class="text-center mt-3">
+                                        <button class="btn btn-primary" onclick="createAudiobookFromStory()">
+                                            <i class="fas fa-headphones me-2"></i>Convert to Audiobook
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('body').append(modal);
+            $('#storyModal').modal('show');
+            $('#storyModal').on('hidden.bs.modal', function() {
+                $(this).remove();
+            });
+        }
+
+        // Generate Story Function
+        function generateStory() {
+            const theme = $('#storyTheme').val();
+            const length = $('#storyLength').val();
+            const character = $('#mainCharacter').val() || 'a mysterious protagonist';
+
+            $('#generatedStory').removeClass('d-none');
+            $('#storyContent').html('<div class="text-center"><i class="fas fa-spinner fa-spin me-2"></i>Generating your story with AI...</div>');
+
+            // Simulate story generation with actual API call
+            $.post('/api/generate-story', {
+                theme: theme,
+                length: length,
+                character: character
+            })
+            .done(function(response) {
+                if (response.status === 'success') {
+                    $('#storyContent').html(response.story);
+                } else {
+                    $('#storyContent').html('Error generating story. Please try again.');
+                }
+            })
+            .fail(function() {
+                // Fallback stories for demo
+                const stories = {
+                    adventure: `Once upon a time, ${character} embarked on an extraordinary journey through uncharted territories. The path ahead was filled with challenges that would test their courage and determination. As they climbed the treacherous mountain peaks, they discovered ancient secrets that had been hidden for centuries...`,
+                    mystery: `In the quiet town of Willowbrook, ${character} stumbled upon a puzzling case that would change everything. Strange occurrences had been reported, and clues were scattered like breadcrumbs leading to a shocking revelation...`,
+                    romance: `${character} never believed in love at first sight until that fateful autumn evening. The chance encounter at the old bookstore would spark a romance that transcended time and space...`,
+                    scifi: `In the year 2157, ${character} was chosen for humanity's most important mission. The discovery of an alien signal had changed everything, and now they must venture into the unknown reaches of space...`,
+                    fantasy: `In the mystical realm of Eldoria, ${character} possessed a rare gift that could save or destroy the kingdom. Ancient magic flowed through their veins as they faced dragons, wizards, and enchanted forests...`,
+                    horror: `${character} should never have entered the abandoned mansion on Elm Street. The creaking floors and whispering shadows held dark secrets that had been buried for decades...`
+                };
+                $('#storyContent').html(stories[theme]);
+            });
+        }
+
+        // Convert Story to Audiobook
+        function createAudiobookFromStory() {
+            const story = $('#storyContent').text();
+            if (story && !story.includes('Generating')) {
+                $('#storyModal').modal('hide');
+                setTimeout(() => {
+                    window.location.href = '/create?text=' + encodeURIComponent(story);
+                }, 500);
+            }
+        }
+
+        // Start Jury Demo
+        function startJuryDemo() {
+            $('#juryModal').modal('hide');
+            setTimeout(() => {
+                window.location.href = '/create?demo=jury';
+            }, 500);
+        }
+
+        // Show Technical Details
+        function showTechnicalDetails() {
+            const modal = `
+                <div class="modal fade" id="techModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header bg-gradient-info text-white">
+                                <h5 class="modal-title"><i class="fas fa-cog me-2"></i>Technical Architecture</h5>
+                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <h6>Backend Technologies</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fab fa-python text-primary me-2"></i>Python Flask Framework</li>
+                                            <li><i class="fas fa-brain text-success me-2"></i>IBM Granite 3.2 AI Model</li>
+                                            <li><i class="fas fa-robot text-info me-2"></i>Multiple LLM APIs (Groq, HF, Cohere)</li>
+                                            <li><i class="fas fa-volume-up text-warning me-2"></i>Google Text-to-Speech</li>
+                                            <li><i class="fas fa-cloud text-primary me-2"></i>Google Colab Integration</li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6>Frontend Technologies</h6>
+                                        <ul class="list-unstyled">
+                                            <li><i class="fab fa-bootstrap text-purple me-2"></i>Bootstrap 5 Framework</li>
+                                            <li><i class="fab fa-js text-warning me-2"></i>jQuery & Vanilla JavaScript</li>
+                                            <li><i class="fas fa-magic text-success me-2"></i>AOS Animation Library</li>
+                                            <li><i class="fas fa-mobile-alt text-info me-2"></i>Responsive Design</li>
+                                            <li><i class="fas fa-paint-brush text-danger me-2"></i>Custom CSS Animations</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <div class="mt-4">
+                                    <h6>System Architecture</h6>
+                                    <div class="bg-light p-3 rounded">
+                                        <code>
+                                        User Input → IBM Granite (Text Enhancement) → LLM Processing →
+                                        Google TTS (Audio Generation) → Professional Audio Effects →
+                                        MP3 Download
+                                        </code>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            $('body').append(modal);
+            $('#techModal').modal('show');
+            $('#techModal').on('hidden.bs.modal', function() {
+                $(this).remove();
+            });
+        }
+
+        // Live Wallpaper System
+        let currentWallpaper = 'auto';
+        let wallpaperInterval;
+
+        function initializeLiveWallpaper() {
+            if (currentWallpaper === 'auto') {
+                setTimeBasedWallpaper();
+                // Update wallpaper every 30 minutes
+                wallpaperInterval = setInterval(setTimeBasedWallpaper, 30 * 60 * 1000);
+            }
+        }
+
+        function setTimeBasedWallpaper() {
+            const hour = new Date().getHours();
+            let wallpaper;
+
+            if (hour >= 6 && hour < 12) {
+                wallpaper = 'morning';
+            } else if (hour >= 12 && hour < 18) {
+                wallpaper = 'afternoon';
+            } else {
+                wallpaper = 'evening';
+            }
+
+            activateWallpaper(wallpaper);
+        }
+
+        function setWallpaper(type) {
+            currentWallpaper = type;
+
+            // Clear existing interval
+            if (wallpaperInterval) {
+                clearInterval(wallpaperInterval);
+            }
+
+            // Update button states
+            $('.wallpaper-btn').removeClass('active');
+            $(`.wallpaper-btn[data-wallpaper="${type}"]`).addClass('active');
+
+            if (type === 'auto') {
+                initializeLiveWallpaper();
+            } else {
+                activateWallpaper(type);
+            }
+        }
+
+        function activateWallpaper(type) {
+            // Fade out all wallpapers
+            $('.wallpaper-layer').removeClass('active');
+
+            // Fade in selected wallpaper after a brief delay
+            setTimeout(() => {
+                $(`#${type}Wallpaper`).addClass('active');
+            }, 500);
+        }
+
+        // Initialize wallpaper system on page load
+        $(document).ready(function() {
+            if ($('.live-wallpaper-container').length > 0) {
+                initializeLiveWallpaper();
+            }
+
+            // Initialize enhanced interactions
+            initializeEnhancedInteractions();
+        });
+
+        // Enhanced Interactions System
+        function initializeEnhancedInteractions() {
+            // Add ripple effect to buttons
+            $('.btn').addClass('ripple');
+
+            // Add hover effects to cards
+            $('.card, .professional-card').addClass('interactive-element');
+
+            // Stagger animations for elements
+            staggerAnimations();
+
+            // Initialize scroll-triggered animations
+            initializeScrollAnimations();
+
+            // Add micro-interactions to form elements
+            initializeFormInteractions();
+
+            // Initialize navbar scroll effects
+            initializeNavbarScrollEffects();
+        }
+
+        function staggerAnimations() {
+            // Animate elements with stagger effect
+            $('.feature-item').each(function(index) {
+                $(this).addClass('animate-fade-in-up delay-' + (index * 100 + 100));
+            });
+
+            $('.ai-model-card').each(function(index) {
+                $(this).addClass('animate-scale-in delay-' + (index * 200 + 200));
+            });
+        }
+
+        function initializeScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-fade-in-up');
+                    }
+                });
+            }, observerOptions);
+
+            // Observe elements for scroll animations
+            document.querySelectorAll('.scroll-animate').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        function initializeFormInteractions() {
+            // Enhanced form focus effects
+            $('.form-control, .form-select').on('focus', function() {
+                $(this).parent().addClass('form-group-focused');
+            }).on('blur', function() {
+                $(this).parent().removeClass('form-group-focused');
+            });
+
+            // Floating labels
+            $('.form-floating input, .form-floating textarea').on('input', function() {
+                if ($(this).val()) {
+                    $(this).addClass('has-value');
+                } else {
+                    $(this).removeClass('has-value');
+                }
+            });
+        }
+
+        function initializeNavbarScrollEffects() {
+            let lastScrollTop = 0;
+            const navbar = $('.world-class-nav');
+
+            $(window).scroll(function() {
+                const scrollTop = $(this).scrollTop();
+
+                // Add/remove scrolled class
+                if (scrollTop > 50) {
+                    navbar.addClass('scrolled');
+                } else {
+                    navbar.removeClass('scrolled');
+                }
+
+                // Hide/show navbar on scroll
+                if (scrollTop > lastScrollTop && scrollTop > 100) {
+                    navbar.addClass('navbar-hidden');
+                } else {
+                    navbar.removeClass('navbar-hidden');
+                }
+
+                lastScrollTop = scrollTop;
+            });
+        }
+
+        // Utility functions for animations
+        function animateCounter(element, target, duration = 2000) {
+            const start = 0;
+            const increment = target / (duration / 16);
+            let current = start;
+
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    current = target;
+                    clearInterval(timer);
+                }
+                $(element).text(Math.floor(current));
+            }, 16);
+        }
+
+        function createParticleEffect(element, particleCount = 20) {
+            for (let i = 0; i < particleCount; i++) {
+                const particle = $('<div class="particle"></div>');
+                particle.css({
+                    position: 'absolute',
+                    width: '4px',
+                    height: '4px',
+                    background: 'rgba(102, 126, 234, 0.6)',
+                    borderRadius: '50%',
+                    pointerEvents: 'none',
+                    left: Math.random() * 100 + '%',
+                    top: Math.random() * 100 + '%',
+                    animation: `particleFloat ${2 + Math.random() * 3}s ease-in-out infinite`
+                });
+                $(element).append(particle);
+
+                setTimeout(() => particle.remove(), 5000);
+            }
+        }
+
+        // Page transition effects
+        function transitionToPage(url) {
+            $('body').addClass('page-transitioning');
+            setTimeout(() => {
+                window.location.href = url;
+            }, 300);
+        }
+
+        // Enhanced Error Handling and User Feedback
+        class NotificationSystem {
+            constructor() {
+                this.container = this.createContainer();
+                this.notifications = [];
+            }
+
+            createContainer() {
+                const container = $(`
+                    <div id="notification-container"
+                         class="position-fixed top-0 end-0 p-3"
+                         style="z-index: 9999; max-width: 400px;">
+                    </div>
+                `);
+                $('body').append(container);
+                return container;
+            }
+
+            show(message, type = 'info', duration = 5000, options = {}) {
+                const id = 'notification-' + Date.now();
+                const icons = {
+                    success: 'fas fa-check-circle',
+                    error: 'fas fa-exclamation-circle',
+                    warning: 'fas fa-exclamation-triangle',
+                    info: 'fas fa-info-circle'
+                };
+
+                const colors = {
+                    success: 'success',
+                    error: 'danger',
+                    warning: 'warning',
+                    info: 'primary'
+                };
+
+                const notification = $(`
+                    <div id="${id}" class="toast align-items-center text-white bg-${colors[type]} border-0 mb-2"
+                         role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body d-flex align-items-center">
+                                <i class="${icons[type]} me-2"></i>
+                                <span>${message}</span>
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto"
+                                    data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                        ${options.progress ? '<div class="toast-progress"><div class="toast-progress-bar"></div></div>' : ''}
+                    </div>
+                `);
+
+                this.container.append(notification);
+
+                // Initialize Bootstrap toast
+                const toast = new bootstrap.Toast(notification[0], {
+                    delay: duration,
+                    autohide: duration > 0
+                });
+
+                // Add progress bar animation if enabled
+                if (options.progress && duration > 0) {
+                    const progressBar = notification.find('.toast-progress-bar');
+                    progressBar.css({
+                        width: '100%',
+                        transition: `width ${duration}ms linear`
+                    });
+                    setTimeout(() => progressBar.css('width', '0%'), 100);
+                }
+
+                // Show toast with animation
+                notification.addClass('animate-fade-in-right');
+                toast.show();
+
+                // Remove from DOM after hiding
+                notification.on('hidden.bs.toast', () => {
+                    notification.remove();
+                    this.notifications = this.notifications.filter(n => n.id !== id);
+                });
+
+                const notificationObj = { id, element: notification, toast };
+                this.notifications.push(notificationObj);
+
+                return notificationObj;
+            }
+
+            success(message, duration = 5000, options = {}) {
+                return this.show(message, 'success', duration, options);
+            }
+
+            error(message, duration = 8000, options = {}) {
+                return this.show(message, 'error', duration, options);
+            }
+
+            warning(message, duration = 6000, options = {}) {
+                return this.show(message, 'warning', duration, options);
+            }
+
+            info(message, duration = 5000, options = {}) {
+                return this.show(message, 'info', duration, options);
+            }
+
+            clear() {
+                this.notifications.forEach(notification => {
+                    notification.toast.hide();
+                });
+                this.notifications = [];
+            }
+        }
+
+        // Global notification system
+        window.notifications = new NotificationSystem();
+
+        // Enhanced Loading System
+        class LoadingSystem {
+            constructor() {
+                this.activeLoaders = new Set();
+                this.overlay = this.createOverlay();
+            }
+
+            createOverlay() {
+                const overlay = $(`
+                    <div id="loading-overlay" class="position-fixed top-0 start-0 w-100 h-100 d-none"
+                         style="z-index: 9998; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px);">
+                        <div class="d-flex align-items-center justify-content-center h-100">
+                            <div class="text-center text-white">
+                                <div class="spinner-border mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <div class="loading-text">Processing...</div>
+                            </div>
+                        </div>
+                    </div>
+                `);
+                $('body').append(overlay);
+                return overlay;
+            }
+
+            show(message = 'Loading...', id = 'default') {
+                this.activeLoaders.add(id);
+                this.overlay.find('.loading-text').text(message);
+                this.overlay.removeClass('d-none').addClass('animate-fade-in');
+            }
+
+            hide(id = 'default') {
+                this.activeLoaders.delete(id);
+                if (this.activeLoaders.size === 0) {
+                    this.overlay.addClass('animate-fade-out');
+                    setTimeout(() => {
+                        this.overlay.addClass('d-none').removeClass('animate-fade-in animate-fade-out');
+                    }, 300);
+                }
+            }
+
+            hideAll() {
+                this.activeLoaders.clear();
+                this.hide();
+            }
+        }
+
+        // Global loading system
+        window.loading = new LoadingSystem();
+
+        // Enhanced Form Validation
+        function validateForm(formSelector) {
+            const form = $(formSelector);
+            let isValid = true;
+            const errors = [];
+
+            form.find('[required]').each(function() {
+                const field = $(this);
+                const value = field.val().trim();
+                const fieldName = field.attr('name') || field.attr('id') || 'Field';
+
+                if (!value) {
+                    isValid = false;
+                    errors.push(`${fieldName} is required`);
+                    field.addClass('is-invalid');
+                    showFieldError(field, `${fieldName} is required`);
+                } else {
+                    field.removeClass('is-invalid').addClass('is-valid');
+                    hideFieldError(field);
+                }
+            });
+
+            // Email validation
+            form.find('input[type="email"]').each(function() {
+                const field = $(this);
+                const value = field.val().trim();
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+                if (value && !emailRegex.test(value)) {
+                    isValid = false;
+                    errors.push('Please enter a valid email address');
+                    field.addClass('is-invalid');
+                    showFieldError(field, 'Please enter a valid email address');
+                }
+            });
+
+            return { isValid, errors };
+        }
+
+        function showFieldError(field, message) {
+            hideFieldError(field);
+            const errorDiv = $(`<div class="invalid-feedback">${message}</div>`);
+            field.after(errorDiv);
+        }
+
+        function hideFieldError(field) {
+            field.next('.invalid-feedback').remove();
+        }
+
+        // Network Error Handling
+        function handleNetworkError(error, context = '') {
+            console.error('Network error:', error);
+
+            let message = 'An unexpected error occurred. Please try again.';
+
+            if (!navigator.onLine) {
+                message = 'No internet connection. Please check your network and try again.';
+            } else if (error.status === 404) {
+                message = 'The requested resource was not found.';
+            } else if (error.status === 500) {
+                message = 'Server error. Please try again later.';
+            } else if (error.status === 403) {
+                message = 'Access denied. Please check your permissions.';
+            } else if (error.timeout) {
+                message = 'Request timed out. Please try again.';
+            }
+
+            if (context) {
+                message = `${context}: ${message}`;
+            }
+
+            notifications.error(message);
+        }
+
+        // Initialize error handling
+        $(document).ready(function() {
+            // Global AJAX error handler
+            $(document).ajaxError(function(event, xhr, settings, error) {
+                handleNetworkError(xhr, 'Request failed');
+            });
+
+            // Handle offline/online events
+            window.addEventListener('offline', () => {
+                notifications.warning('You are now offline. Some features may not work.');
+            });
+
+            window.addEventListener('online', () => {
+                notifications.success('Connection restored.');
+            });
+        });
+    </script>
+
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</body>
+</html>
