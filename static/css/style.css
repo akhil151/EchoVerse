@@ -22,6 +22,127 @@
     --transition: all 0.3s ease;
 }
 
+/* Simple Project Title */
+.simple-project-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+}
+
+/* Animated Project Title (kept for compatibility) */
+.animated-project-title {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    text-align: center;
+    pointer-events: none;
+}
+
+.simple-project-title .title-container {
+    opacity: 1;
+}
+
+.main-title-simple {
+    font-size: 4.5rem;
+    font-weight: 800;
+    margin: 0;
+    color: #ffffff;
+    text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 255, 255, 0.3);
+    letter-spacing: 2px;
+}
+
+.title-subtitle-simple {
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.8), 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+.title-container {
+    opacity: 0;
+    animation: titleFadeIn 1s ease-out 0.5s forwards;
+}
+
+.main-title {
+    font-size: 4.5rem;
+    font-weight: 800;
+    margin: 0;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
+    -webkit-background-clip: text;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7), 0 0 20px rgba(255, 255, 255, 0.3);
+    color: #ffffff;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+    letter-spacing: -2px;
+}
+
+.title-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(50px) rotateX(90deg);
+    animation: wordSlideIn 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.title-subtitle {
+    margin-top: 1rem;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #ffffff;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8), 0 0 15px rgba(255, 255, 255, 0.2);
+}
+
+.subtitle-word {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: subtitleSlideIn 0.6s ease-out forwards;
+    margin: 0 0.3rem;
+}
+
+.title-underline {
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+    margin: 1.5rem auto 0;
+    border-radius: 2px;
+    animation: underlineExpand 1.2s ease-out 1.5s forwards;
+    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+}
+
+@keyframes titleFadeIn {
+    to { opacity: 1; }
+}
+
+@keyframes wordSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0) rotateX(0);
+    }
+}
+
+@keyframes subtitleSlideIn {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes underlineExpand {
+    to { width: 200px; }
+}
+
 /* Professional Background Video Styling */
 #background-video-container {
     position: fixed;
@@ -69,12 +190,30 @@ body {
     background-color: #f8fafc;
     position: relative;
     overflow-x: hidden;
+    margin: 0;
+    padding: 0;
 }
 
 .main-content {
     margin-top: 80px;
-    min-height: calc(100vh - 160px);
-    padding: 2rem 0;
+    min-height: calc(100vh - 80px);
+    padding: 0;
+}
+
+/* Remove excess spacing from containers */
+.container-fluid {
+    padding: 0;
+}
+
+.row {
+    margin: 0;
+}
+
+/* Adjust hero section spacing */
+.hero-section {
+    padding: 0;
+    margin: 0;
+    min-height: 100vh;
 }
 
 /* Typography */
@@ -104,6 +243,26 @@ body {
     position: relative;
     z-index: 1000;
     min-height: 80px;
+    padding: 1rem 0;
+}
+
+.world-class-nav .container {
+    padding: 0 2rem;
+}
+
+.world-class-nav .navbar-brand {
+    margin-right: 2rem;
+    padding: 0.5rem 0;
+}
+
+.world-class-nav .navbar-nav {
+    margin: 0 1rem;
+}
+
+.world-class-nav .nav-link-modern {
+    margin: 0 0.5rem;
+    padding: 0.8rem 1.5rem !important;
+    border-radius: 12px;
 }
 
 /* Dashboard-Specific Navbar (Reduced Height) */
@@ -1738,7 +1897,8 @@ body.dashboard-page .nav-text {
 .hero-section {
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
     border-radius: var(--border-radius);
-    margin-bottom: 3rem;
+    margin: 0;
+    padding: 0;
 }
 
 .hero-content h1 {
@@ -2090,11 +2250,12 @@ body.dashboard-page .nav-text {
 @media (max-width: 768px) {
     .main-content {
         margin-top: 70px;
-        padding: 1rem 0;
+        padding: 0;
     }
-    
+
     .hero-section {
-        padding: 2rem 1rem;
+        padding: 0;
+        margin: 0;
     }
     
     .creation-wizard {

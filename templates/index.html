@@ -40,6 +40,14 @@
         </div>
         <div class="hero-particles"></div>
         <div class="hero-gradient"></div>
+
+        <!-- Simple Visible Project Title -->
+        <div class="simple-project-title">
+            <div class="title-container">
+                <h1 class="main-title-simple">EchoVerse</h1>
+                <div class="title-subtitle-simple">Professional AI Audiobook Creator</div>
+            </div>
+        </div>
     </div>
 
     <div class="container">
@@ -550,5 +558,34 @@ function playDemoAudio() {
         playBtn.style.background = 'linear-gradient(135deg, rgba(255, 193, 7, 0.9) 0%, rgba(255, 107, 107, 0.9) 100%)';
     });
 }
+
+// Animate project title
+function animateProjectTitle() {
+    const titleWords = document.querySelectorAll('.title-word');
+    const subtitleWords = document.querySelectorAll('.subtitle-word');
+
+    titleWords.forEach((word, index) => {
+        const delay = parseInt(word.dataset.delay) || 0;
+        setTimeout(() => {
+            word.style.animationDelay = '0s';
+            word.style.opacity = '1';
+            word.style.transform = 'translateY(0) rotateX(0)';
+        }, delay);
+    });
+
+    subtitleWords.forEach((word, index) => {
+        const delay = parseInt(word.dataset.delay) || 0;
+        setTimeout(() => {
+            word.style.animationDelay = '0s';
+            word.style.opacity = '1';
+            word.style.transform = 'translateY(0)';
+        }, delay);
+    });
+}
+
+// Start title animation after page load
+document.addEventListener('DOMContentLoaded', function() {
+    setTimeout(animateProjectTitle, 1000);
+});
 </script>
 {% endblock %}

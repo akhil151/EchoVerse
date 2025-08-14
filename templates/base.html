@@ -459,12 +459,16 @@
     /* Navbar Scroll Animation */
     .world-class-nav {
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        background: rgba(17, 24, 39, 0.95) !important;
+        backdrop-filter: blur(20px);
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .world-class-nav.scrolled {
-        backdrop-filter: blur(20px);
-        background: rgba(255, 255, 255, 0.95);
-        box-shadow: var(--shadow-md);
+        backdrop-filter: blur(25px);
+        background: rgba(17, 24, 39, 0.98) !important;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
     }
 
     /* Loading Animations */
@@ -946,11 +950,13 @@
         }
 
         .world-class-nav {
-            background: rgba(17, 24, 39, 0.95);
+            background: rgba(17, 24, 39, 0.98) !important;
+            box-shadow: 0 2px 25px rgba(0, 0, 0, 0.5);
         }
 
         .world-class-nav.scrolled {
-            background: rgba(17, 24, 39, 0.98);
+            background: rgba(17, 24, 39, 1) !important;
+            box-shadow: 0 4px 35px rgba(0, 0, 0, 0.6);
         }
     }
 
@@ -1381,8 +1387,8 @@
     <div id="particles-js"></div>
 
     <!-- Main Content -->
-    <main class="main-content">
-        <div class="container">
+    <main class="main-content" id="main-content">
+        <div class="container-fluid px-0">
             <!-- Alert Messages -->
             <div id="alertContainer"></div>
 
